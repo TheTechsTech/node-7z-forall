@@ -4,8 +4,8 @@
   "description": "A Node.js wrapper for 7-Zip with platform binaries",
   "main": "lib/index.js",
   "scripts": {
-    "test": "mocha",
-    "coveralls": "npm install coveralls && cat .tmp/coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
+    "test": "nyc mocha",
+    "coverage": "nyc report --reporter=text-lcov | coveralls",
     "install": "node installer.js"
   },
   "repository": {
@@ -55,6 +55,8 @@
   },
   "devDependencies": {
     "chai": "^4.1.2",
-    "mocha": "^6.1.4"
+    "coveralls": "^3.0.5",
+    "mocha": "^6.1.4",
+    "nyc": "^14.1.1"
   }
 }
