@@ -100,7 +100,7 @@ function getDataForPlatform() {
             sfxmodules: ['7zr.exe','7zS2.sfx','7zS2con.sfx','7zSD.sfx'] };
         // Linux version
         case "linux": return { 
-            url: 'https://pilotfiber.dl.sourceforge.net/project/p7zip/p7zip/16.02/', 
+            url: 'https://iweb.dl.sourceforge.net/project/p7zip/p7zip/16.02/', 
             filename: 'p7zip_16.02_x86_linux_bin.tar.bz2',
             extraname: 'lzma1604.7z',
             extractfolder: 'p7zip_16.02',
