@@ -1,6 +1,5 @@
 before_install:
   - sudo apt-get update -qq
-  - npm config set strict-ssl false
 language: node_js
 node_js:
   - '6'
