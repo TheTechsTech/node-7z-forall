@@ -252,7 +252,7 @@ With :heart: from [quentinrossetti](http://quentinrossetti.me/)
 [david-url]: https://david-dm.org/techno-express/node-7z
 [david-image]: http://img.shields.io/david/techno-express/node-7z.svg
 [travis-url]: https://travis-ci.org/techno-express/node-7z
-[travis-image]: http://img.shields.io/travis/techno-express/node-7z.svg
+[travis-image]: https://travis-ci.org/techno-express/node-7z.svg?branch=master
 [codeclimate-url]: https://codeclimate.com/github/techno-express/node-7z/maintainability
 [codeclimate-image]: https://api.codeclimate.com/v1/badges/0d6a0bc69a8ea29c7de9/maintainability
 [coveralls-url]: https://coveralls.io/github/techno-express/node-7z
