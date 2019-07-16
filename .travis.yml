@@ -1,6 +1,7 @@
 before_install:
   - sudo apt-get update -qq
 language: node_js
+sudo: required
 node_js:
   - '10'
 script: 'npm run coverage'
