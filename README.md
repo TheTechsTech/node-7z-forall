@@ -1,7 +1,7 @@
 node-7z-forall
 =======
 
-[![Dependencies Status][david-image]][david-url] [![Build Status][travis-image]][travis-url] [![Code coverage][coveralls-image]][coveralls-url] [![Maintainability][codeclimate-image]][codeclimate-url][![Release][npm-image]][npm-url]
+[![Dependencies Status][david-image]][david-url] [![Build Status][appveyor-image]][appveyor-url] [![Code coverage][coveralls-image]][coveralls-url] [![Maintainability][codeclimate-image]][codeclimate-url][![Release][npm-image]][npm-url]
 
 > A Node.js wrapper for 7-Zip *with platform binaries*
 
@@ -251,8 +251,8 @@ With :heart: from [quentinrossetti](http://quentinrossetti.me/)
 
 [david-url]: https://david-dm.org/techno-express/node-7z
 [david-image]: http://img.shields.io/david/techno-express/node-7z.svg
-[travis-url]: https://travis-ci.org/techno-express/node-7z
-[travis-image]: https://travis-ci.org/techno-express/node-7z.svg?branch=master
+[appveyor-url]: https://ci.appveyor.com/project/techno-express/node-7z
+[appveyor-image]: https://ci.appveyor.com/api/projects/status/ou26dml9njvknb0w/branch/master?svg=true
 [codeclimate-url]: https://codeclimate.com/github/techno-express/node-7z/maintainability
 [codeclimate-image]: https://api.codeclimate.com/v1/badges/0d6a0bc69a8ea29c7de9/maintainability
 [coveralls-url]: https://coveralls.io/github/techno-express/node-7z
