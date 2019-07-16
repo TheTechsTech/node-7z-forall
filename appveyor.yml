@@ -7,7 +7,6 @@ cache:
 
 # Install scripts. (runs after repo cloning)
 install:
-  - 7z # Display 7z version and help
   # Get the latest stable version of Node.js or io.js
   - ps: Install-Product node $env:nodejs_version
   # install modules
@@ -15,9 +14,6 @@ install:
 
 # Post-install test scripts.
 test_script:
-  # Output useful info for debugging.
-  - node --version
-  - npm --version
   # run tests
   - ps: npm run test
 
