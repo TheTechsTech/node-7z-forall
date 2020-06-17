@@ -38,10 +38,6 @@ const _7zipData = getDataForPlatform();
 const whattocopy = _7zipData.binaryfiles;
 const cwd = process.cwd();
 
-// Will use P7zip 16.02 if installer find Mac OS is 10.11 or higher
-const downloadandcopy = ['10.11', '10.10', '10.9', '10.8', '10.7', '10.6'];
-var retrytime = [];
-
 var appleos = '';
 try {
     var appleos =
@@ -101,40 +97,46 @@ wget({ url: _7zAppurl + zipextraname, dest: extrasource })
             });
             platformUnpacker(source, destination)
                 .then(function (mode) {
+                    if (!mode) {
+                        throw 'Unpacking for platform failed.';
+                    }
                     whattocopy.forEach(function (s) {
-                        fs.moveSync(
-                            path.join(
-                                destination,
-                                _7zipData.extractfolder,
-                                _7zipData.applocation,
-                                s
-                            ),
-                            path.join(binarydestination, s),
-                            { overwrite: true }
-                        );
+                        try {
+                            fs.moveSync(
+                                path.join(
+                                    destination,
+                                    _7zipData.extractfolder,
+                                    _7zipData.applocation,
+                                    s
+                                ),
+                                path.join(binarydestination, s),
+                                { overwrite: true }
+                            );
+                        } catch (err) {
+                            console.error(err);
+                        }
                     });
                     if (process.platform != 'win32') makeexecutable();
                     console.log('Binaries copied successfully!');
                     fs.unlink(source, (err) => {
-                        if (err) console.error(err);
+                        if (err) throw err;
                     });
                     fs.remove(destination, (err) => {
-                        if (err) console.error(err);
+                        if (err) throw err;
                     });
-                    var result = extraunpack(
+                    extraunpack(
                         _7zcommand,
                         extrasource,
                         binarydestination,
                         zipsfxmodules
                     );
-                    // console.log(result);
                     fs.unlink(extrasource, (err) => {
-                        if (err) console.error(err);
+                        if (err) throw err;
                     });
                     console.log('Sfx modules copied successfully!');
                 })
-                .catch(function (err) {
-                    console.log(err);
+                .catch((err) => {
+                    console.error(err);
                 });
         }
     })
@@ -145,7 +147,11 @@ wget({ url: _7zAppurl + zipextraname, dest: extrasource })
 function makeexecutable() {
     var chmod = ['7z', '7z.so', '7za', '7zCon.sfx', '7zr'];
     chmod.forEach(function (s) {
-        fs.chmodSync(path.join(binarydestination, s), 755);
+        try {
+            fs.chmodSync(path.join(binarydestination, s), 755);
+        } catch (err) {
+            console.error(err);
+        }
     });
 }
 
@@ -222,125 +228,75 @@ function wget(path) {
 }
 
 function platformUnpacker(source, destination) {
-    return new retryPromise(function (resolve, retry, reject) {
-        wget({ url: zipurl + zipfilename, dest: source })
-            .then(function () {
-                if (process.platform == 'darwin') {
-                    console.log('Extracting: ' + zipfilename);
-                    unpack(source, destination)
-                        .then(function () {
-                            console.log(
-                                'Decompressing: p7zipinstall.pkg/Payload'
-                            );
+    return new retryPromise({ retries: 5 }, function (resolve, retry) {
+        wget({ url: zipurl + zipfilename, dest: source }).then(function () {
+            if (process.platform == 'darwin') {
+                console.log('Extracting: ' + zipfilename);
+                unpack(source, destination)
+                    .then(function () {
+                        console.log('Decompressing: p7zipinstall.pkg/Payload');
+                        unpack(
+                            path.join(
+                                destination,
+                                'p7zipinstall.pkg',
+                                'Payload'
+                            ),
+                            destination
+                        ).then(function (data) {
+                            console.log('Decompressing: Payload');
                             unpack(
-                                path.join(
-                                    destination,
-                                    'p7zipinstall.pkg',
-                                    'Payload'
-                                ),
-                                destination
-                            )
-                                .then(function (data) {
-                                    console.log('Decompressing: Payload');
-                                    unpack(
-                                        path.join(destination, 'Payload'),
-                                        destination,
-                                        _7zipData.applocation + path.sep + '*'
-                                    )
-                                        .then(function (result) {
-                                            // console.log(result);
-                                            return resolve('darwin');
-                                        })
-                                        .catch(function (err) {
-                                            retrytime.push(err);
-                                            if (
-                                                retrytime.length ===
-                                                downloadandcopy.length
-                                            )
-                                                reject(err);
-                                            else retry();
-                                        });
-                                })
-                                .catch(function (err) {
-                                    retrytime.push(err);
-                                    if (
-                                        retrytime.length ===
-                                        downloadandcopy.length
-                                    )
-                                        reject(err);
-                                    else retry();
-                                });
-                        })
-                        .catch(function (err) {
-                            retrytime.push(err);
-                            if (retrytime.length === downloadandcopy.length)
-                                reject(err);
-                            else retry();
+                                path.join(destination, 'Payload'),
+                                destination,
+                                _7zipData.applocation + path.sep + '*'
+                            ).then(function () {
+                                return resolve('darwin');
+                            });
                         });
-                } else if (process.platform == 'win32') {
-                    unpack(source, destination)
-                        .then(function (result) {
-                            // console.log(result);
-                            return resolve('win32');
-                        })
-                        .catch(function (err) {
-                            retrytime.push(err);
-                            if (retrytime.length === downloadandcopy.length)
-                                reject(err);
-                            else retry();
+                    })
+                    .catch((err) => {
+                        retry(err);
+                    });
+            } else if (process.platform == 'win32') {
+                unpack(source, destination)
+                    .then(function () {
+                        return resolve('win32');
+                    })
+                    .catch((err) => {
+                        retry(err);
+                    });
+            } else if (process.platform == 'linux') {
+                unpack(source, destination)
+                    .then(function () {
+                        const system_installer = require('system-installer');
+                        const distro = system_installer.packager();
+                        const toinstall =
+                            distro.packager == 'yum' || distro.packager == 'dnf'
+                                ? 'glibc.i686'
+                                : 'libc6-i386';
+                        system_installer.installer(toinstall).then(function () {
+                            return resolve('linux');
                         });
-                } else if (process.platform == 'linux') {
-                    unpack(source, destination)
-                        .then(function (result) {
-                            // console.log(result);
-                            const system_installer = require('system-installer');
-                            const distro = system_installer.packager();
-                            const toinstall =
-                                distro.packager == 'yum' ||
-                                distro.packager == 'dnf'
-                                    ? 'glibc.i686'
-                                    : 'libc6-i386';
-                            system_installer
-                                .installer(toinstall)
-                                .then(function (result) {
-                                    // console.log(result);
-                                    return resolve('linux');
-                                })
-                                .catch(function (err) {
-                                    retrytime.push(err);
-                                    if (
-                                        retrytime.length ===
-                                        downloadandcopy.length
-                                    )
-                                        reject(err);
-                                    else retry();
-                                });
-                        })
-                        .catch(function (err) {
-                            retrytime.push(err);
-                            if (retrytime.length === downloadandcopy.length)
-                                reject(err);
-                            else retry();
-                        });
-                }
-            })
-            .catch(function (err) {
-                retrytime.push(err);
-                if (retrytime.length === downloadandcopy.length) reject(err);
-                else retry();
-            });
+                    })
+                    .catch((err) => {
+                        retry();
+                    });
+            }
+        });
+    }).catch((err) => {
+        console.error(err);
     });
 }
 
 function unpack(source, destination, tocopy) {
     return new Promise(function (resolve, reject) {
-        uncompress.unpack(
+        return uncompress.unpack(
             source,
             {
                 files: tocopy == null ? '' : tocopy,
                 targetDir: destination,
                 forceOverwrite: true,
                 noDirectory: true,
+                quiet: true,
             },
             function (err, files, text) {
                 if (err) return reject(err);
