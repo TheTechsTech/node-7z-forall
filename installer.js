@@ -8,76 +8,16 @@ const uncompress = require('all-unpacker');
 const retryPromise = require('retrying-promise');
 const node_wget = require('node-wget');
 
-var versionCompare = function (left, right) {
-    if (typeof left + typeof right != 'stringstring') return false;
-
-    var a = left.split('.');
-    var b = right.split('.');
-    var i = 0;
-    var len = Math.max(a.length, b.length);
-
-    for (; i < len; i++) {
-        if (
-            (a[i] && !b[i] && parseInt(a[i]) > 0) ||
-            parseInt(a[i]) > parseInt(b[i])
-        ) {
-            return 1;
-        } else if (
-            (b[i] && !a[i] && parseInt(b[i]) > 0) ||
-            parseInt(a[i]) < parseInt(b[i])
-        ) {
-            return -1;
-        }
-    }
-
-    return 0;
-};
-
 const _7zAppurl = 'http://7-zip.org/a/';
 const _7zipData = getDataForPlatform();
 const whattocopy = _7zipData.binaryfiles;
 const cwd = process.cwd();
 
-var appleos = '';
-try {
-    var appleos =
-        process.platform == 'darwin' ? require('macos-release').version : '';
-} catch (e) {
-    var appleos = '99.99';
-}
-const macosversion =
-    appleos == ''
-        ? appleos
-        : versionCompare(appleos, '10.11') == -1
-        ? appleos
-        : '10.11';
-
-const zipextraname =
-    process.platform != 'darwin'
-        ? _7zipData.extraname
-        : macosversion == '10.11'
-        ? _7zipData.extraname[1]
-        : _7zipData.extraname[0];
+const zipextraname = _7zipData.extraname;
 const extrasource = path.join(cwd, zipextraname);
-
-const zipfilename =
-    process.platform != 'darwin'
-        ? _7zipData.filename
-        : macosversion == '10.11'
-        ? _7zipData.filename[1]
-        : _7zipData.filename[0];
-const zipsfxmodules =
-    process.platform != 'darwin'
-        ? _7zipData.sfxmodules
-        : macosversion == '10.11'
-        ? _7zipData.sfxmodules[0][1]
-        : _7zipData.sfxmodules[0][0];
-const zipurl =
-    process.platform != 'darwin'
-        ? _7zipData.url
-        : macosversion == '10.11'
-        ? _7zipData.url[1]
-        : _7zipData.url[0] + macosversion + '/';
+const zipfilename = _7zipData.filename;
+const zipsfxmodules = _7zipData.sfxmodules;
+const zipurl = _7zipData.url;
 
 const source = path.join(cwd, zipfilename);
 const destination = path.join(cwd, process.platform);
@@ -190,12 +130,10 @@ function getDataForPlatform() {
         // Mac version
         case 'darwin':
             return {
-                url: [
+                url:
                     'https://raw.githubusercontent.com/rudix-mac/packages/master/',
-                    'https://raw.githubusercontent.com/rudix-mac/pkg/master/',
-                ],
-                filename: ['p7zip-9.20.1-1.pkg', 'p7zip-16.02.pkg'],
-                extraname: ['7z920_extra.7z', 'lzma1604.7z'],
+                filename: 'p7zip-16.02.pkg',
+                extraname: 'lzma1604.7z',
                 extractfolder: '',
                 applocation: 'usr/local/lib/p7zip',
                 binaryfiles: [
@@ -206,10 +144,7 @@ function getDataForPlatform() {
                     '7zr',
                     'Codecs',
                 ],
-                sfxmodules: [
-                    ['7zS.sfx', '7zS2.sfx', '7zS2con.sfx', '7zSD.sfx'],
-                    ['7zS2.sfx', '7zS2con.sfx', '7zSD.sfx'],
-                ],
+                sfxmodules: ['7zS2.sfx', '7zS2con.sfx', '7zSD.sfx'],
             };
     }
 }
