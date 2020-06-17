@@ -37,3 +37,10 @@ test/.DS_Store
 binaries/.DS_Store
 .DS_Store
 binaries
+
+# Webstorm
+.idea/*
+
+# VS Code
+.vs/
+.vscode/
