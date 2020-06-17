@@ -1,6 +1,6 @@
 {
     "name": "node-7z-forall",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "description": "A Node.js wrapper for 7-Zip with platform binaries",
     "main": "lib/index.js",
     "scripts": {
