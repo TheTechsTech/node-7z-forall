@@ -5,7 +5,7 @@ var switches = require('../../util/switches');
 
 describe('Utility: `switches`', function () {
 
-  it('should return deflaut flags with no args', function () {
+  it('should return default flags with no args', function () {
     expect(switches({})).to.contain('-ssc');
     expect(switches({})).to.contain('-y');
   });

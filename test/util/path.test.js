@@ -6,7 +6,7 @@ var path = require('../../util/path');
 
 describe('Utility: `path`', function () {
 
-  it('should return deflaut flags with no args', function () {   
+  it('should return default flags with no args', function () {   
     var _7zcmd = path();
     var pathInSystem = exec('which ' + _7zcmd.fullpath).toString();
   });

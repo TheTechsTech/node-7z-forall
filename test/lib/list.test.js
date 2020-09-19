@@ -3,6 +3,28 @@
 var expect = require('chai').expect;
 var list   = require('../../lib/list');
 
+function testListProgress (file, done) {
+  var error;
+  list('test/zip.7z')
+  .progress(function (entries) {
+    try {
+      expect(entries.length).to.be.at.least(1);
+      entries.forEach(function (entry) {
+        expect(entry.date).to.be.an.instanceof(Date);
+        expect(entry.attr.length).to.eql(5);
+        expect(entry.name).to.be.a('string');
+        expect(entry.name).to.not.contain('\\');
+      });
+    } catch(e) {
+      error = e;
+    }
+  })
+  .then(function () {
+    done(error)
+  })
+  .done(next);
+}
+
 describe('Method: `Zip.list`', function () {
 
   it('should return an error on 7z error', function (done) {
@@ -25,15 +47,29 @@ describe('Method: `Zip.list`', function () {
     });
   });
 
-  it('should return valid entries on progress', function (done) {
-    list('test/zip.zip')
-    .progress(function (entries) {
-      expect(entries.length).to.be.at.least(1);
-      expect(entries[0].date).to.be.an.instanceof(Date);
-      expect(entries[0].attr.length).to.eql(5);
-      expect(entries[0].name).to.be.a('string');
-      expect(entries[0].name).to.not.contain('\\');
-      done();
+  ['zip.zip', 'zip.7z'].forEach(function (file) {
+    it('should return valid entries on progress (' + file + ')', function (done) {
+      var expectFailure;
+      list('test/' + file)
+      .progress(function (entries) {
+        try {
+          expect(entries.length).to.be.at.least(1);
+          entries.forEach(function (entry) {
+            expect(entry.date).to.be.an.instanceof(Date);
+            expect(entry.attr.length).to.eql(5);
+            expect(entry.name).to.be.a('string');
+            expect(entry.name).to.not.contain('\\');
+          });
+        } catch(e) {
+          expectFailure = e;
+        }
+      })
+      .then(function () {
+        done(expectFailure);
+      })
+      .catch(function (listError) {
+        done(listError || expectFailure);
+      });
     });
   });
 
