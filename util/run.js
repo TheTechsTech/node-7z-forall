@@ -34,8 +34,8 @@ module.exports = function (command, switches) {
     var commands       = command.match(regexpCommands);
     if (commands) {
       commands.forEach(function (c) {
-        c = c.replace(/\//, path.sep);
-        c = c.replace(/\\/, path.sep);
+        c = c.replace(/\//g, path.sep);
+        c = c.replace(/\\/g, path.sep);
         c = path.normalize(c);
         args.push(c);
       });
@@ -48,8 +48,8 @@ module.exports = function (command, switches) {
     if (output) {
       args.pop();
       var o = output[0];
-      o = o.replace(/\//, path.sep);
-      o = o.replace(/\\/, path.sep);
+      o = o.replace(/\//g, path.sep);
+      o = o.replace(/\\/g, path.sep);
       o = o.replace(/"/g, '');
       o = path.normalize(o);
       args.push(o);
