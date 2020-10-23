@@ -132,7 +132,7 @@ function getDataForPlatform() {
             return {
                 url:
                     'https://raw.githubusercontent.com/rudix-mac/packages/master/',
-                filename: 'p7zip-16.02.pkg',
+                filename: 'p7zip-16.02-macos10.15.pkg',
                 extraname: 'lzma1604.7z',
                 extractfolder: '',
                 applocation: 'usr/local/lib/p7zip',
