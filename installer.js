@@ -155,6 +155,7 @@ function wget(path) {
         let download = node_wget.download(path.url, path.dest, {});
         download.on('error', function(err) {
             console.error('Error downloading file: ' + err);
+            return reject(err);
         });
         download.on('end', function(output) {
             return resolve();
