@@ -13,9 +13,41 @@ const _7zipData = getDataForPlatform();
 const whattocopy = _7zipData.binaryfiles;
 const cwd = process.cwd();
 
+var versionCompare = function (left, right) {
+    if (typeof left + typeof right != 'stringstring')
+        return false;
+
+    var a = left.split('.');
+    var b = right.split('.');
+    var i = 0;
+    var len = Math.max(a.length, b.length);
+
+    for (; i < len; i++) {
+        if ((a[i] && !b[i] && parseInt(a[i]) > 0) || (parseInt(a[i]) > parseInt(b[i]))) {
+            return 1;
+        } else if ((b[i] && !a[i] && parseInt(b[i]) > 0) || (parseInt(a[i]) < parseInt(b[i]))) {
+            return -1;
+        }
+    }
+
+    return 0;
+}
+
+try {
+    var appleos = (process.platform == "darwin") ? require('macos-release').version : '';
+} catch (e) {
+    var appleos = '';
+}
+
+const macosversion = (appleos == '') ? appleos
+    : ((versionCompare(appleos, '10.11.12') == 1) ? '10.15' : '10.11');
+
 const zipextraname = _7zipData.extraname;
 const extrasource = path.join(cwd, zipextraname);
-const zipfilename = _7zipData.filename;
+
+const zipfilename = (process.platform != "darwin") ? _7zipData.filename
+    : ((macosversion == '10.15') ? _7zipData.filename[1] : _7zipData.filename[0]);
+
 const zipsfxmodules = _7zipData.sfxmodules;
 const zipurl = _7zipData.url;
 
@@ -132,7 +164,7 @@ function getDataForPlatform() {
             return {
                 url:
                     'https://raw.githubusercontent.com/rudix-mac/packages/master/',
-                filename: 'p7zip-16.02.pkg',
+                filename: ['p7zip-16.02-macos10.15.pkg', 'p7zip-16.02-macos10.11.pkg'],
                 extraname: 'lzma1604.7z',
                 extractfolder: '',
                 applocation: 'usr/local/lib/p7zip',

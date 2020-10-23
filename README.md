@@ -34,12 +34,12 @@ myTask.extractFull('myArchive.7z', 'destination', { p: 'myPassword' })
 Installation
 ------------
 
-This package will download the 7zip binaries at install time. Host system does not need to have 7zip installed or in PATH. 
+This package will download the 7zip binaries at install time. Host system does not need to have 7zip installed or in PATH.
 
 The binaries will be downloaded from:
 > On Linux - https://sourceforge.net/projects/p7zip
-> On Windows - http://www.7-zip.org/download.html
-> On Mac OSX - http://rudix.org/packages/p7zip.html
+> On Windows - https://www.7-zip.org/download.html
+> On Mac OSX - https://rudix.org/
 
 ```
 npm install --save node-7z-forall
