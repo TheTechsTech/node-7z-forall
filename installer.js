@@ -6,7 +6,7 @@ const path = require('path');
 const spawn = require('cross-spawn');
 const uncompress = require('all-unpacker');
 const retryPromise = require('retrying-promise');
-const node_wget = require('node-wget');
+const node_wget = require('wget-improved');
 
 const _7zAppurl = 'http://7-zip.org/a/';
 const _7zipData = getDataForPlatform();
@@ -152,11 +152,11 @@ function getDataForPlatform() {
 function wget(path) {
     console.log('Downloading ' + path.url);
     return new Promise(function (resolve, reject) {
-        node_wget(path, function (err) {
-            if (err) {
-                console.error('Error downloading file: ' + err);
-                return reject(err);
-            }
+        let download = node_wget.download(path.url, path.dest, {});
+        download.on('error', function(err) {
+            console.error('Error downloading file: ' + err);
+        });
+        download.on('end', function(output) {
             return resolve();
         });
     });
