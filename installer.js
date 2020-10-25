@@ -4,13 +4,13 @@
 const fs = require('fs-extra');
 const path = require('path');
 const spawn = require('cross-spawn');
-const uncompress = require('all-unpacker');
+const unCompress = require('all-unpacker');
 const retryPromise = require('retrying-promise');
-const node_wget = require('node-wget');
+const node_wget = require('node-wget-js');
 
-const _7zAppurl = 'http://7-zip.org/a/';
+const _7zAppUrl = 'http://7-zip.org/a/';
 const _7zipData = getDataForPlatform();
-const whattocopy = _7zipData.binaryfiles;
+const whatToCopy = _7zipData.binaryFiles;
 const cwd = process.cwd();
 
 var versionCompare = function (left, right) {
@@ -34,35 +34,35 @@ var versionCompare = function (left, right) {
 }
 
 try {
-    var appleos = (process.platform == "darwin") ? require('macos-release').version : '';
+    var appleOs = (process.platform == "darwin") ? require('macos-release').version : '';
 } catch (e) {
-    var appleos = '';
+    var appleOs = '';
 }
 
-const macosversion = (appleos == '') ? appleos
-    : ((versionCompare(appleos, '10.11.12') == 1) ? '10.15' : '10.11');
+const macOsVersion = (appleOs == '') ? appleOs
+    : ((versionCompare(appleOs, '10.11.12') == 1) ? '10.15' : '10.11');
 
-const zipextraname = _7zipData.extraname;
-const extrasource = path.join(cwd, zipextraname);
+const zipExtraName = _7zipData.extraName;
+const extraSource = path.join(cwd, zipExtraName);
 
-const zipfilename = (process.platform != "darwin") ? _7zipData.filename
-    : ((macosversion == '10.15') ? _7zipData.filename[1] : _7zipData.filename[0]);
+const zipFilename = (process.platform != "darwin") ? _7zipData.filename
+    : ((macOsVersion == '10.15') ? _7zipData.filename[1] : _7zipData.filename[0]);
 
-const zipsfxmodules = _7zipData.sfxmodules;
-const zipurl = _7zipData.url;
+const zipSfxModules = _7zipData.sfxModules;
+const zipUrl = _7zipData.url;
 
-const source = path.join(cwd, zipfilename);
+const source = path.join(cwd, zipFilename);
 const destination = path.join(cwd, process.platform);
 
-const binarydestination = path.join(__dirname, 'binaries', process.platform);
-const _7zcommand = path.join(
-    binarydestination,
+const binaryDestination = path.join(__dirname, 'binaries', process.platform);
+const _7zCommand = path.join(
+    binaryDestination,
     process.platform == 'win32' ? '7za.exe' : '7za'
 );
 
-wget({ url: _7zAppurl + zipextraname, dest: extrasource })
+wget({ url: _7zAppUrl + zipExtraName, dest: extraSource })
     .then(function () {
-        if (zipurl != null) {
+        if (zipUrl != null) {
             fs.mkdir(destination, (err) => {
                 if (err) {
                 }
@@ -72,23 +72,23 @@ wget({ url: _7zAppurl + zipextraname, dest: extrasource })
                     if (!mode) {
                         throw 'Unpacking for platform failed.';
                     }
-                    whattocopy.forEach(function (s) {
+                    whatToCopy.forEach(function (s) {
                         try {
                             fs.moveSync(
                                 path.join(
                                     destination,
-                                    _7zipData.extractfolder,
-                                    _7zipData.applocation,
+                                    _7zipData.extractFolder,
+                                    _7zipData.appLocation,
                                     s
                                 ),
-                                path.join(binarydestination, s),
+                                path.join(binaryDestination, s),
                                 { overwrite: true }
                             );
                         } catch (err) {
                             console.error(err);
                         }
                     });
-                    if (process.platform != 'win32') makeexecutable();
+                    if (process.platform != 'win32') makeExecutable();
                     console.log('Binaries copied successfully!');
                     fs.unlink(source, (err) => {
                         if (err) throw err;
@@ -96,13 +96,13 @@ wget({ url: _7zAppurl + zipextraname, dest: extrasource })
                     fs.remove(destination, (err) => {
                         if (err) throw err;
                     });
-                    extraunpack(
-                        _7zcommand,
-                        extrasource,
-                        binarydestination,
-                        zipsfxmodules
+                    extraUnpack(
+                        _7zCommand,
+                        extraSource,
+                        binaryDestination,
+                        zipSfxModules
                     );
-                    fs.unlink(extrasource, (err) => {
+                    fs.unlink(extraSource, (err) => {
                         if (err) throw err;
                     });
                     console.log('Sfx modules copied successfully!');
@@ -116,11 +116,11 @@ wget({ url: _7zAppurl + zipextraname, dest: extrasource })
         console.error('Error downloading file: ' + err);
     });
 
-function makeexecutable() {
+function makeExecutable() {
     var chmod = ['7z', '7z.so', '7za', '7zCon.sfx', '7zr'];
     chmod.forEach(function (s) {
         try {
-            fs.chmodSync(path.join(binarydestination, s), 755);
+            fs.chmodSync(path.join(binaryDestination, s), 755);
         } catch (err) {
             console.error(err);
         }
@@ -134,11 +134,11 @@ function getDataForPlatform() {
             return {
                 url: 'http://d.7-zip.org/a/',
                 filename: '7z1805-extra.7z',
-                extraname: 'lzma1805.7z',
-                extractfolder: '',
-                applocation: '',
-                binaryfiles: ['Far', 'x64', '7za.dll', '7za.exe', '7zxa.dll'],
-                sfxmodules: ['7zr.exe', '7zS2.sfx', '7zS2con.sfx', '7zSD.sfx'],
+                extraName: 'lzma1805.7z',
+                extractFolder: '',
+                appLocation: '',
+                binaryFiles: ['Far', 'x64', '7za.dll', '7za.exe', '7zxa.dll'],
+                sfxModules: ['7zr.exe', '7zS2.sfx', '7zS2con.sfx', '7zSD.sfx'],
             };
         // Linux version
         case 'linux':
@@ -146,10 +146,10 @@ function getDataForPlatform() {
                 url:
                     'https://iweb.dl.sourceforge.net/project/p7zip/p7zip/16.02/',
                 filename: 'p7zip_16.02_x86_linux_bin.tar.bz2',
-                extraname: 'lzma1604.7z',
-                extractfolder: 'p7zip_16.02',
-                applocation: 'bin',
-                binaryfiles: [
+                extraName: 'lzma1604.7z',
+                extractFolder: 'p7zip_16.02',
+                appLocation: 'bin',
+                binaryFiles: [
                     '7z',
                     '7z.so',
                     '7za',
@@ -157,7 +157,7 @@ function getDataForPlatform() {
                     '7zr',
                     'Codecs',
                 ],
-                sfxmodules: ['7zS2.sfx', '7zS2con.sfx', '7zSD.sfx'],
+                sfxModules: ['7zS2.sfx', '7zS2con.sfx', '7zSD.sfx'],
             };
         // Mac version
         case 'darwin':
@@ -165,10 +165,10 @@ function getDataForPlatform() {
                 url:
                     'https://raw.githubusercontent.com/rudix-mac/packages/master/',
                 filename: ['p7zip-16.02-macos10.15.pkg', 'p7zip-16.02-macos10.11.pkg'],
-                extraname: 'lzma1604.7z',
-                extractfolder: '',
-                applocation: 'usr/local/lib/p7zip',
-                binaryfiles: [
+                extraName: 'lzma1604.7z',
+                extractFolder: '',
+                appLocation: 'usr/local/lib/p7zip',
+                binaryFiles: [
                     '7z',
                     '7z.so',
                     '7za',
@@ -176,7 +176,7 @@ function getDataForPlatform() {
                     '7zr',
                     'Codecs',
                 ],
-                sfxmodules: ['7zS2.sfx', '7zS2con.sfx', '7zSD.sfx'],
+                sfxModules: ['7zS2.sfx', '7zS2con.sfx', '7zSD.sfx'],
             };
     }
 }
@@ -196,9 +196,9 @@ function wget(path) {
 
 function platformUnpacker(source, destination) {
     return new retryPromise({ retries: 5 }, function (resolve, retry) {
-        wget({ url: zipurl + zipfilename, dest: source }).then(function () {
+        wget({ url: zipUrl + zipFilename, dest: source }).then(function () {
             if (process.platform == 'darwin') {
-                console.log('Extracting: ' + zipfilename);
+                console.log('Extracting: ' + zipFilename);
                 unpack(source, destination)
                     .then(function () {
                         console.log('Decompressing: p7zipinstall.pkg/Payload');
@@ -214,7 +214,7 @@ function platformUnpacker(source, destination) {
                             unpack(
                                 path.join(destination, 'Payload'),
                                 destination,
-                                _7zipData.applocation + path.sep + '*'
+                                _7zipData.appLocation + path.sep + '*'
                             ).then(function () {
                                 return resolve('darwin');
                             });
@@ -235,12 +235,12 @@ function platformUnpacker(source, destination) {
                 unpack(source, destination)
                     .then(function () {
                         const system_installer = require('system-installer');
-                        const distro = system_installer.packager();
-                        const toinstall =
-                            distro.packager == 'yum' || distro.packager == 'dnf'
+                        const system = system_installer.packager();
+                        const toInstall =
+                            system.packager == 'yum' || system.packager == 'dnf'
                                 ? 'glibc.i686'
                                 : 'libc6-i386';
-                        system_installer.installer(toinstall).then(function () {
+                        system_installer.installer(toInstall).then(function () {
                             return resolve('linux');
                         });
                     })
@@ -254,12 +254,12 @@ function platformUnpacker(source, destination) {
     });
 }
 
-function unpack(source, destination, tocopy) {
+function unpack(source, destination, toCopy) {
     return new Promise(function (resolve, reject) {
-        return uncompress.unpack(
+        return unCompress.unpack(
             source,
             {
-                files: tocopy == null ? '' : tocopy,
+                files: toCopy == null ? '' : toCopy,
                 targetDir: destination,
                 forceOverwrite: true,
                 noDirectory: true,
@@ -273,22 +273,22 @@ function unpack(source, destination, tocopy) {
     });
 }
 
-function extraunpack(cmd, source, destination, tocopy) {
+function extraUnpack(cmd, source, destination, toCopy) {
     var args = ['e', source, '-o' + destination];
-    var extraargs = args.concat(tocopy).concat(['-r', '-aos']);
-    console.log('Running: ' + cmd + ' ' + extraargs);
-    var extraunpacker = spawnsync(cmd, extraargs);
-    if (extraunpacker.error) return extraunpacker.error;
-    else if (extraunpacker.stdout.toString())
-        return extraunpacker.stdout.toString();
+    var extraArgs = args.concat(toCopy).concat(['-r', '-aos']);
+    console.log('Running: ' + cmd + ' ' + extraArgs);
+    var extraUnpacker = spawnSync(cmd, extraArgs);
+    if (extraUnpacker.error) return extraUnpacker.error;
+    else if (extraUnpacker.stdout.toString())
+        return extraUnpacker.stdout.toString();
 }
 
-function spawnsync(spcmd, spargs) {
-    var dounpack = spawn.sync(spcmd, spargs, { stdio: 'pipe' });
-    if (dounpack.error) {
-        console.error('Error 7za exited with code ' + dounpack.error);
+function spawnSync(spCmd, spArgs) {
+    var doUnpack = spawn.sync(spCmd, spArgs, { stdio: 'pipe' });
+    if (doUnpack.error) {
+        console.error('Error 7za exited with code ' + doUnpack.error);
         console.log('resolve the problem and re-install using:');
         console.log('npm install');
-        return dounpack;
-    } else return dounpack;
+        return doUnpack;
+    } else return doUnpack;
 }

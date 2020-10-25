@@ -4,5 +4,5 @@ language: node_js
 sudo: required
 node_js:
   - '10'
-script: 'npm run coverage'
+script: 'npm run test'
 after_script: 'npm run coveralls'
