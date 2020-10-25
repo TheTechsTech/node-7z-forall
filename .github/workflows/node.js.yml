@@ -10,7 +10,7 @@ on:
     branches: [ master ]
 
 jobs:
-  build:    
+  build:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -26,4 +26,3 @@ jobs:
     - run: npm ci
     - run: npm run build --if-present
     - run: npm test
-    - run: npm coveralls
