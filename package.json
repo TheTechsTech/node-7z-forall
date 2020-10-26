@@ -1,11 +1,10 @@
 {
     "name": "node-7z-forall",
-    "version": "1.0.8",
+    "version": "1.0.9",
     "description": "A Node.js wrapper for 7-Zip with platform binaries",
     "main": "lib/index.js",
     "scripts": {
         "test": "mocha",
-        "coveralls": "npm install coveralls && cat .tmp/coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
         "install": "node installer.js"
     },
     "repository": {
@@ -47,7 +46,7 @@
     ],
     "dependencies": {
         "all-unpacker": "^0.1.5",
-        "cross-spawn": "^6.0.5",
+        "cross-spawn": "^7.0.3",
         "fs-extra": "^8.0.0",
         "macos-release": "^2.0.0",
         "node-wget-js": "^0.4.4",
