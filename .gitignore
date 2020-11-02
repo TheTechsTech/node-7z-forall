@@ -43,3 +43,4 @@ binaries
 # VS Code
 .vs/
 .vscode/
+win32/
