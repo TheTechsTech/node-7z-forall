@@ -44,3 +44,4 @@ binaries
 .vs/
 .vscode/
 win32/
+.nyc_output/
