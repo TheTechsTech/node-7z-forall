@@ -7,14 +7,14 @@ const path = require('path');
 const spawn = require('cross-spawn');
 const unCompress = require('all-unpacker');
 const retryPromise = require('retrying-promise');
-const node_wget = require('node-wget-fetch');
+const fetching = require('node-wget-fetch');
 
 const _7zAppUrl = 'http://7-zip.org/a/';
 const _7zipData = getDataForPlatform();
 const whatToCopy = _7zipData.binaryFiles;
 const cwd = process.cwd();
 
-var versionCompare = function (left, right) {
+const versionCompare = function (left, right) {
   if (typeof left + typeof right != 'stringstring')
     return false;
 
@@ -188,7 +188,7 @@ function getDataForPlatform() {
 function wget(path) {
     console.log('Downloading ' + path.url);
     return new Promise(function (resolve, reject) {
-        node_wget.wget(path.url, path.dest)
+        fetching.wget(path.url, path.dest)
             .then((info) => resolve(info))
             .catch((err) => reject('Error downloading file: ' + err));
     });
