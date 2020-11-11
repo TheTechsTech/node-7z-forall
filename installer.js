@@ -137,8 +137,8 @@ function getDataForPlatform() {
         case 'win32':
             return {
                 url: 'http://d.7-zip.org/a/',
-                filename: '7z1805-extra.7z',
-                extraName: 'lzma1805.7z',
+                filename: '7z1900-extra.7z',
+                extraName: 'lzma1900.7z',
                 extractFolder: '',
                 appLocation: '',
                 binaryFiles: ['Far', 'x64', '7za.dll', '7za.exe', '7zxa.dll'],
