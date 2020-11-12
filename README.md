@@ -3,7 +3,7 @@ node-7z-forall
 
 [![NPM](https://nodei.co/npm/node-7z-forall.png)](https://nodei.co/npm/node-7z-forall/)
 
-[![Dependencies Status][david-image]][david-url] [![Node.js CI](https://github.com/techno-express/node-7z-forall/workflows/Node.js%20CI/badge.svg?branch=1x)](https://github.com/techno-express/node-7z-forall/actions) [![codecov](https://codecov.io/gh/techno-express/node-7z-forall/branch/1x/graph/badge.svg?token=VoVpnT8B7X)](https://codecov.io/gh/techno-express/node-7z-forall) [![Maintainability][codeclimate-image]][codeclimate-url][![Release][npm-image]][npm-url]
+[![Dependencies Status][david-image]][david-url] [![Node.js CI](https://github.com/techno-express/node-7z-forall/workflows/Node.js%20CI/badge.svg?branch=1x)](https://github.com/techno-express/node-7z-forall/actions) [![codecov](https://codecov.io/gh/techno-express/node-7z-forall/branch/master/graph/badge.svg)](https://codecov.io/gh/techno-express/node-7z-forall) [![Maintainability][codeclimate-image]][codeclimate-url][![Release][npm-image]][npm-url]
 
 > A Node.js wrapper for 7-Zip with binaries for **Linux**, **Windows**, and **Mac OSX**.
 
