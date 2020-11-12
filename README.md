@@ -7,6 +7,8 @@ node-7z-forall
 
 > A Node.js wrapper for 7-Zip with binaries for **Linux**, **Windows**, and **Mac OSX**.
 
+> ____This is for version 2.x WIP, for version 1.x see [1x](https://github.com/techno-express/node-7z-forall/tree/1x) branch.____
+
 Usage
 -----
 
