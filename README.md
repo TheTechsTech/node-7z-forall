@@ -3,19 +3,19 @@ node-7z-forall
 
 [![NPM](https://nodei.co/npm/node-7z-forall.png)](https://nodei.co/npm/node-7z-forall/)
 
-[![Dependencies Status][david-image]][david-url] ![Node.js CI](https://github.com/techno-express/node-7z/workflows/Node.js%20CI/badge.svg) [![codecov](https://codecov.io/gh/techno-express/node-7z/branch/master/graph/badge.svg?token=VoVpnT8B7X)](https://codecov.io/gh/techno-express/node-7z) [![Maintainability][codeclimate-image]][codeclimate-url][![Release][npm-image]][npm-url]
+[![Dependencies Status][david-image]][david-url] [![Node.js CI](https://github.com/techno-express/node-7z-forall/workflows/Node.js%20CI/badge.svg)](https://github.com/techno-express/node-7z-forall) [![codecov](https://codecov.io/gh/techno-express/node-7z-forall/branch/master/graph/badge.svg?token=VoVpnT8B7X)](https://codecov.io/gh/techno-express/node-7z) [![Maintainability][codeclimate-image]][codeclimate-url][![Release][npm-image]][npm-url]
 
-> A Node.js wrapper for 7-Zip *with platform binaries*
+> A Node.js wrapper for 7-Zip with binaries for **Linux**, **Windows**, and **Mac OSX**.
 
 Usage
 -----
 
-I chose to use *Promises* in this library. API is consistent with standard use:
+This library use *Promises*, it's API is consistent with standard use:
 
 ```js
-var Zip = require('node-7z-forall'); // Name the class as you want!
-var myTask = new Zip();
-myTask.extractFull('myArchive.7z', 'destination', { p: 'myPassword' })
+const Zip = require('node-7z-forall'); // Name the class as you want!
+
+Zip.extractFull('myArchive.7z', 'destination', { p: 'myPassword' })
 
 // Equivalent to `on('data', function (files) { // ... });`
 .progress(function (files) {
@@ -40,7 +40,9 @@ This package will download the 7zip binaries at install time. Host system does n
 
 The binaries will be downloaded from:
 > On Linux - https://sourceforge.net/projects/p7zip
+
 > On Windows - https://www.7-zip.org/download.html
+
 > On Mac OSX - https://rudix.org/
 
 ```bash
@@ -221,7 +223,6 @@ archive.extractFull('archive.zip', 'destination/', {
 
 Note that the `r` (for recursive) attribute is passed in this example.
 
-
 ### Raw inputs
 
 > Thanks to sketchpunk #9 for this one
@@ -247,13 +248,12 @@ archive.list('archive.zip', {
 });
 ```
 
-
 ***
 With :heart: from [quentinrossetti](http://quentinrossetti.me/)
 
-[david-url]: https://david-dm.org/techno-express/node-7z
-[david-image]: http://img.shields.io/david/techno-express/node-7z.svg
-[codeclimate-url]: https://codeclimate.com/github/techno-express/node-7z/maintainability
+[david-url]: https://david-dm.org/techno-express/node-7z-forall
+[david-image]: http://img.shields.io/david/techno-express/node-7z-forall.svg
+[codeclimate-url]: https://codeclimate.com/github/techno-express/node-7z-forall/maintainability
 [codeclimate-image]: https://api.codeclimate.com/v1/badges/0d6a0bc69a8ea29c7de9/maintainability
 [npm-url]: https://www.npmjs.org/package/node-7z-forall
 [npm-image]: http://img.shields.io/npm/v/node-7z-forall.svg

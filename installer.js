@@ -2,17 +2,16 @@
 
 'use strict';
 
-const fs = require('fs-extra');
-const path = require('path');
-const spawn = require('cross-spawn');
-const unCompress = require('all-unpacker');
-const retryPromise = require('retrying-promise');
-const fetching = require('node-wget-fetch');
-
-const _7zAppUrl = 'http://7-zip.org/a/';
-const _7zipData = getDataForPlatform();
-const whatToCopy = _7zipData.binaryFiles;
-const cwd = process.cwd();
+const fs = require('fs-extra'),
+    path = require('path'),
+    spawn = require('cross-spawn'),
+    unCompress = require('all-unpacker'),
+    retryPromise = require('retrying-promise'),
+    fetching = require('node-wget-fetch'),
+    _7zAppUrl = 'http://7-zip.org/a/',
+    _7zipData = getDataForPlatform(),
+    whatToCopy = _7zipData.binaryFiles,
+    cwd = process.cwd();
 
 const versionCompare = function (left, right) {
     if (typeof left + typeof right != 'stringstring')

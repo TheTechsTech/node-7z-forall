@@ -1,7 +1,7 @@
 {
     "name": "node-7z-forall",
-    "version": "1.1.6",
-    "description": "A Node.js wrapper for 7-Zip with platform binaries",
+    "version": "2.0.0",
+    "description": "A Node.js wrapper for 7-Zip with binaries for Linux, Windows, and Mac OSX.",
     "main": "lib/index.js",
     "scripts": {
         "test": "mocha",
@@ -10,7 +10,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/techno-express/node-7z.git"
+        "url": "https://github.com/techno-express/node-7z-forall.git"
     },
     "keywords": [
         "node",
@@ -39,9 +39,9 @@
     ],
     "license": "ISC",
     "bugs": {
-        "url": "https://github.com/techno-express/node-7z/issues"
+        "url": "https://github.com/techno-express/node-7z-forall/issues"
     },
-    "homepage": "https://github.com/quentinrossetti/node-7zip.git",
+    "homepage": "https://github.com/techno-express/node-7z-forall.git",
     "files": [
         "*.js",
         "LICENSE",

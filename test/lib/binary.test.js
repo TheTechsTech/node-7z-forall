@@ -1,77 +1,77 @@
 /*global describe, it */
 'use strict';
-var expect   = require('chai').expect;
-var binary = require('../../util/path');
+const expect = require('chai').expect,
+    binary = require('../../util/path');
 
 describe('Method: `Zip.binary`', function () {
-    var _7zcmd = binary();
-    
+    let _7zCmd = binary();
+
     it('should return an object', function (done) {
-        expect(_7zcmd).to.be.an('object');
-        done();
-    });      
-   
-    it('should return an object with key fields of `path, filename, fullpath` and be string', function (done) {
-		expect(_7zcmd).to.have.property('path');
-		expect(_7zcmd).to.have.property('filename');
-		expect(_7zcmd).to.have.property('fullpath');
-		expect(_7zcmd.fullpath).to.be.a('string');
-        done();
-    });  
-  
-    it('should return an string from `object` with correct key { path: 7za } ', function (done) {
-        var _7zpath = binary({ path: '7za' });
-        expect(_7zpath).to.be.a('string');
+        expect(_7zCmd).to.be.an('object');
         done();
     });
-	
-    it('should return an object from `object` with wrong key or no key', function (done) {
-        var _7zpathwrong = binary({ nopath: '7za' });
-        expect(_7zpathwrong).to.be.an('object');
-        var _7zpathno = binary('???');
-        expect(_7zpathno).to.be.an('object');
+
+    it('should return an object with key fields of `path, filename, filepath` and be string', function (done) {
+        expect(_7zCmd).to.have.property('path');
+        expect(_7zCmd).to.have.property('filename');
+        expect(_7zCmd).to.have.property('filepath');
+        expect(_7zCmd.filepath).to.be.a('string');
         done();
-    });		
+    });
+
+    it('should return an string from `object` with correct key { path: 7za } ', function (done) {
+        let _7zPath = binary({ path: '7za' });
+        expect(_7zPath).to.be.a('string');
+        done();
+    });
+
+    it('should return an object from `object` with wrong key or no key', function (done) {
+        let _7zPathWrong = binary({ noPath: '7za' });
+        expect(_7zPathWrong).to.be.an('object');
+        let _7zPathNo = binary('???');
+        expect(_7zPathNo).to.be.an('object');
+        done();
+    });
 });
 
 
 
 describe('Method: `Zip.binary` with platform set to `darwin`', function () {
-	    // save original process.platform    
-    before(function() { this.originalPlatform = Object.getOwnPropertyDescriptor(process, 'platform');
-    // redefine process.platform
-        Object.defineProperty(process, 'platform', { value: 'darwin' }); });
+    // save original process.platform
+    before(function () {
+        this.originalPlatform = Object.getOwnPropertyDescriptor(process, 'platform');
+        // redefine process.platform
+        Object.defineProperty(process, 'platform', { value: 'darwin' });
+    });
     // restore original process.platform
-    after(function() { Object.defineProperty(process, 'platform', this.originalPlatform); });
-	
-    var _7zcmdmac = binary();
-    
+    after(function () { Object.defineProperty(process, 'platform', this.originalPlatform); });
+
+    let _7zCmdMac = binary();
+
     it('should return an object', function (done) {
-        expect(_7zcmdmac).to.be.an('object');
-        done();
-    });      
-   
-    it('should return an object with key fields of `path, filename, fullpath` and be string', function (done) {
-		expect(_7zcmdmac).to.have.property('path');
-		expect(_7zcmdmac).to.have.property('filename');
-		expect(_7zcmdmac).to.have.property('fullpath');
-		expect(_7zcmdmac.fullpath).to.be.a('string');
-        done();
-    });  
-  
-    it('should return an string from `object` with correct key { path: 7za } ', function (done) {
-        var _7zpathmac = binary({ path: '7za' });
-        expect(_7zpathmac).to.be.a('string');
+        expect(_7zCmdMac).to.be.an('object');
         done();
     });
-	
-    it('should return an object from `object` with wrong key or no key', function (done) {
-        var _7zpathmacwrong = binary({ nopath: '7za' });
-        expect(_7zpathmacwrong).to.be.an('object');
-        var _7zpathmacno = binary('???');
-        expect(_7zpathmacno).to.be.an('object');
+
+    it('should return an object with key fields of `path, filename, filepath` and be string', function (done) {
+        expect(_7zCmdMac).to.have.property('path');
+        expect(_7zCmdMac).to.have.property('filename');
+        expect(_7zCmdMac).to.have.property('filepath');
+        expect(_7zCmdMac.filepath).to.be.a('string');
         done();
-    });		
+    });
+
+    it('should return an string from `object` with correct key { path: 7za } ', function (done) {
+        let _7zPathMac = binary({ path: '7za' });
+        expect(_7zPathMac).to.be.a('string');
+        done();
+    });
+
+    it('should return an object from `object` with wrong key or no key', function (done) {
+        let _7zPathMacWrong = binary({ noPath: '7za' });
+        expect(_7zPathMacWrong).to.be.an('object');
+        let _7zPathMacNo = binary('???');
+        expect(_7zPathMacNo).to.be.an('object');
+        done();
+    });
 });
-
-
