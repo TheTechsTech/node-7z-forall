@@ -6,9 +6,9 @@ var nativeSeparator = require('path').sep;
  * @return {string} A path with / for directory separator.
  */
 module.exports = function (path) {
-  var result = path, next;
-  while ((next = result.replace(nativeSeparator, '/')) !== result) {
-    result = next;
-  }
-  return result;
+    var result = path, next;
+    while ((next = result.replace(nativeSeparator, '/')) !== result) {
+        result = next;
+    }
+    return result;
 };
