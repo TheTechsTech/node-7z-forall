@@ -2,11 +2,16 @@
     "name": "node-7z-forall",
     "version": "2.0.0",
     "description": "A Node.js wrapper for 7-Zip with binaries for Linux, Windows, and Mac OSX.",
+    "type": "commonjs",
     "main": "lib/index.js",
+    "exports": {
+        ".": "./lib/index.js",
+        "./module": "./lib/esm/index.mjs"
+    },
     "scripts": {
         "test": "mocha",
         "coverage": "npx nyc@latest --reporter json --reporter text mocha --dir .tmp/coverage && codecov -f coverage/coverage-final.json",
-        "install": "node installer.js"
+        "install": "node installer.mjs"
     },
     "repository": {
         "type": "git",
@@ -44,11 +49,15 @@
     "homepage": "https://github.com/techno-express/node-7z-forall.git",
     "files": [
         "*.js",
+        "*.mjs",
         "LICENSE",
         "README.md",
         "lib",
         "util"
     ],
+    "engines": {
+        "node": ">=10.0.0"
+    },
     "dependencies": {
         "all-unpacker": "^0.1.12",
         "cross-spawn": "^7.0.3",

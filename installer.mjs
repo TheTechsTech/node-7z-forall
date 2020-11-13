@@ -2,13 +2,15 @@
 
 'use strict';
 
-const fs = require('fs-extra'),
-    path = require('path'),
-    spawn = require('cross-spawn'),
-    unCompress = require('all-unpacker'),
-    retryPromise = require('retrying-promise'),
-    fetching = require('node-wget-fetch'),
-    _7zAppUrl = 'http://7-zip.org/a/',
+import fs from 'fs-extra';
+import path from 'path';
+import spawn from 'cross-spawn';
+import unCompress from 'all-unpacker';
+import retryPromise from 'retrying-promise';
+import fetching from 'node-wget-fetch';
+import system_installer from 'system-installer';
+
+const _7zAppUrl = 'http://7-zip.org/a/',
     _7zipData = getDataForPlatform(),
     whatToCopy = _7zipData.binaryFiles,
     cwd = process.cwd();
@@ -53,7 +55,7 @@ const zipUrl = _7zipData.url;
 
 const source = path.join(cwd, zipFilename);
 const destination = path.join(cwd, process.platform);
-
+const __dirname = path.resolve();
 const binaryDestination = path.join(__dirname, 'binaries', process.platform);
 const _7zCommand = path.join(
     binaryDestination,
@@ -238,7 +240,6 @@ function platformUnpacker(source, destination) {
             } else if (process.platform == 'linux') {
                 unpack(source, destination)
                     .then(function () {
-                        const system_installer = require('system-installer');
                         const system = system_installer.packager();
                         const toInstall =
                             system.packager == 'yum' || system.packager == 'dnf' ?
