@@ -11,7 +11,7 @@
     "scripts": {
         "test": "mocha",
         "coverage": "npx nyc@latest --reporter json --reporter text mocha --dir .tmp/coverage && codecov -f coverage/coverage-final.json",
-        "install": "node installer.mjs"
+        "install": "node installer.js"
     },
     "repository": {
         "type": "git",
