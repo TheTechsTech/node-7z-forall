@@ -2,13 +2,14 @@
 'use strict';
 import chai from 'chai';
 import add from '../../lib/esm/add.mjs';
+const expect = chai.expect;
 
-describe('ESM Method: `Zip.add`', function () {
+describe('Method: `Zip.add` ESM', function () {
 
     it('should return an error on 7z error', function (done) {
         add('.tmp/test/addnot.7z', '.tmp/test/nothere', { '???': true })
             .catch(function (err) {
-                chai.expect(err).to.be.an.instanceof(Error);
+                expect(err).to.be.an.instanceof(Error);
                 done();
             });
     });
@@ -16,7 +17,7 @@ describe('ESM Method: `Zip.add`', function () {
     it('should return entries on progress', function (done) {
         add('.tmp/test/add.zip', '*.md')
             .progress(function (entries) {
-                chai.expect(entries.length).to.be.at.least(1);
+                expect(entries.length).to.be.at.least(1);
                 done();
             });
     });
@@ -30,7 +31,7 @@ describe('ESM Method: `Zip.add`', function () {
                 });
             })
             .done(function () {
-                chai.expect(store.length).to.be.at.least(4);
+                expect(store.length).to.be.at.least(4);
                 done();
             });
     });
