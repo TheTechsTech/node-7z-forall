@@ -74,6 +74,7 @@ wget({
                     if (!mode) {
                         throw 'Unpacking for platform failed.';
                     }
+
                     whatToCopy.forEach(function (s) {
                         try {
                             fs.moveSync(
@@ -85,29 +86,37 @@ wget({
                                 ),
                                 path.join(binaryDestination, s), {
                                 overwrite: true
-                            }
-                            );
+                            });
                         } catch (err) {
                             console.error(err);
                         }
                     });
-                    if (process.platform != 'win32') makeExecutable();
+                    if (process.platform != 'win32')
+                        makeExecutable();
+
                     console.log('Binaries copied successfully!');
                     fs.unlink(source, (err) => {
-                        if (err) throw err;
+                        if (err)
+                            throw err;
                     });
+
                     fs.remove(destination, (err) => {
-                        if (err) throw err;
+                        if (err)
+                            throw err;
                     });
+
                     extraUnpack(
                         _7zCommand,
                         extraSource,
                         binaryDestination,
                         zipSfxModules
                     );
+
                     fs.unlink(extraSource, (err) => {
-                        if (err) throw err;
+                        if (err)
+                            throw err;
                     });
+
                     console.log('Sfx modules copied successfully!');
                 })
                 .catch((err) => {
@@ -249,7 +258,7 @@ function platformUnpacker(source, destination) {
                         });
                     })
                     .catch((err) => {
-                        retry();
+                        retry(err);
                     });
             }
         });
@@ -269,7 +278,8 @@ function unpack(source, destination, toCopy) {
             quiet: true,
         },
             function (err, files, text) {
-                if (err) return reject(err);
+                if (err)
+                    return reject(err);
                 return resolve(text);
             }
         );
@@ -277,23 +287,24 @@ function unpack(source, destination, toCopy) {
 }
 
 function extraUnpack(cmd, source, destination, toCopy) {
-    var args = ['e', source, '-o' + destination];
-    var extraArgs = args.concat(toCopy).concat(['-r', '-aos']);
+    let args = ['e', source, '-o' + destination];
+    let extraArgs = args.concat(toCopy).concat(['-r', '-aos']);
     console.log('Running: ' + cmd + ' ' + extraArgs);
-    var extraUnpacker = spawnSync(cmd, extraArgs);
-    if (extraUnpacker.error) return extraUnpacker.error;
+    let extraUnpacker = spawnSync(cmd, extraArgs);
+    if (extraUnpacker.error)
+        return extraUnpacker.error;
     else if (extraUnpacker.stdout.toString())
         return extraUnpacker.stdout.toString();
 }
 
 function spawnSync(spCmd, spArgs) {
-    var doUnpack = spawn.sync(spCmd, spArgs, {
+    let doUnpack = spawn.sync(spCmd, spArgs, {
         stdio: 'pipe'
     });
     if (doUnpack.error) {
         console.error('Error 7za exited with code ' + doUnpack.error);
         console.log('resolve the problem and re-install using:');
         console.log('npm install');
-        return doUnpack;
-    } else return doUnpack;
+    }
+    return doUnpack;
 }

@@ -15,10 +15,14 @@ Usage
 This library use *Promises*, it's API is consistent with standard use:
 
 ```js
-const Zip = require('node-7z-forall'); // Name the class as you want!
+// CommonJS
+const Zip = require('node-7z-forall');
+const extractFull = Zip.extractFull;
 
-Zip.extractFull('myArchive.7z', 'destination', { p: 'myPassword' })
+// ESM for Node JS v12+
+import { extractFull } from 'node-7z-forall';
 
+extractFull('myArchive.7z', 'destination', { p: 'myPassword' } /* 7z options/switches */)
 // Equivalent to `on('data', function (files) { // ... });`
 .progress(function (files) {
   console.log('Some files are extracted: %s', files);
@@ -59,7 +63,16 @@ API
 
 > The type of the list of files can be either *String* or *Array*.
 
-### Add: `Zip.add`
+**const Zip = require('node-7z-forall');**
+
+*Or:*
+
+**import Zip from 'node-7z-forall';**
+
+*By method name:*
+**import { add, delete, extract, extractFull, list, test, update } from 'node-7z-forall';**
+
+### Add: `Zip.add`(archive, files, options)
 
 **Arguments**
  * `archive` Path to the archive you want to create.
@@ -74,7 +87,7 @@ API
  * `err` An Error object.
 
 
-### Delete: `Zip.delete`
+### Delete: `Zip.delete`(archive, files, options)
 
 **Arguments**
  * `archive` Path to the archive you want to delete files from.
@@ -85,7 +98,7 @@ API
  * `err` An Error object.
 
 
-### Extract: `Zip.extract`
+### Extract: `Zip.extract`(archive, dest, options)
 
 **Arguments**
  * `archive` The path to the archive you want to extract.
@@ -100,7 +113,7 @@ API
  * `err` An Error object.
 
 
-### Extract with full paths: `Zip.extractFull`
+### Extract with full paths: `Zip.extractFull`(archive, dest, options)
 
 **Arguments**
  * `archive` The path to the archive you want to extract.
@@ -115,7 +128,7 @@ API
  * `err` An Error object.
 
 
-### List contents of archive: `Zip.list`
+### List contents of archive: `Zip.list`(archive, options)
 
 **Arguments**
  * `archive` The path to the archive you want to analyse.
@@ -126,7 +139,7 @@ API
    The `/` character is used as a path separator on every platform. Object's
    properties are: `date`, `attr`, `size` and `name`.
 
-**Fulfill**
+**Then - Resolved**
  * `spec` An object of tech spec about the archive. Properties are: `path`,
    `type`, `method`, `physicalSize` and `headersSize` (Some of them may be
    missing with non-7z archives).
@@ -135,7 +148,7 @@ API
  * `err` An Error object.
 
 
-### Test integrity of archive: `Zip.test`
+### Test integrity of archive: `Zip.test`(archive, options)
 
 **Arguments**
  * `archive` The path to the archive you want to analyse.
@@ -149,7 +162,7 @@ API
  * `err` An Error object.
 
 
-### Update: `Zip.update`
+### Update: `Zip.update`(archive, files, options)
 
 **Arguments**
  * `archive` Path to the archive you want to update.
@@ -174,14 +187,15 @@ With the `7za` binary compression is made like that:
 ```bat
 # adds *.exe and *.dll files to solid archive archive.7z using LZMA method
 # with 2 MB dictionary and BCJ filter.
-7z a archive.7z *.exe -m0=BCJ -m1=LZMA:d=21
+7za a archive.7z *.exe -m0=BCJ -m1=LZMA:d=21
 ```
 
-With **node-7z** you can translate it like that:
+With **node-7z-forall** you can translate it like that:
 
 ```js
-var archive = new Zip();
-archive.add('archive.7z', '*.exe', {
+import { add } from 'node-7z-forall';
+
+add('archive.7z', '*.exe', {
   m0: '=BCJ',
   m1: '=LZMA:d=21'
 })
@@ -196,8 +210,9 @@ When adding, deleting or updating archives you can pass either a string or an
 array as second parameter (the `files` parameter).
 
 ```js
-var archive = new Zip();
-archive.delete('bigArchive.7z', [ 'file1', 'file2' ])
+import { delete as del } from 'node-7z-forall';
+
+del('bigArchive.7z', [ 'file1', 'file2' ])
 .then(function () {
   // Do stuff...
 });
@@ -210,8 +225,9 @@ this add a `wildcards` attribute to the `options` object. The `wildcard`
 attribute takes an *Array* as value. In this array each item is a wildcard.
 
 ```js
-var archive = new Zip();
-archive.extractFull('archive.zip', 'destination/', {
+import { extractFull } from 'node-7z-forall';
+
+extractFull('archive.zip', 'destination/', {
   wildcards: [ '*.txt', '*.md' ], // extract all text and Markdown files
   r: true // in each subfolder too
 })
@@ -238,8 +254,9 @@ can use the custom `raw` key in your `options` object and pass it an *Array* of
 values.
 
 ```js
-var archive = new Zip();
-archive.list('archive.zip', {
+import { list } from 'node-7z-forall';
+
+list('archive.zip', {
   raw: [ '-i!*.jpg', '-i!*.png' ], // only images
 })
 .progress(function (files) {
@@ -251,7 +268,6 @@ archive.list('archive.zip', {
 ```
 
 ***
-With :heart: from [quentinrossetti](http://quentinrossetti.me/)
 
 [david-url]: https://david-dm.org/techno-express/node-7z-forall
 [david-image]: http://img.shields.io/david/techno-express/node-7z-forall.svg

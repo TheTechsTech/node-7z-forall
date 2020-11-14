@@ -4,7 +4,7 @@
 
 import fs from 'fs-extra';
 import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
+import { dirname, join, sep } from 'path';
 import spawn from 'cross-spawn';
 import unCompress from 'all-unpacker';
 import retryPromise from 'retrying-promise';
@@ -96,23 +96,29 @@ wget({
                             console.error(err);
                         }
                     });
-                    if (process.platform != 'win32') makeExecutable();
+                    if (process.platform != 'win32')
+                        makeExecutable();
+
                     console.log('Binaries copied successfully!');
                     fs.unlink(source, (err) => {
                         if (err) throw err;
                     });
+
                     fs.remove(destination, (err) => {
                         if (err) throw err;
                     });
+
                     extraUnpack(
                         _7zCommand,
                         extraSource,
                         binaryDestination,
                         zipSfxModules
                     );
+
                     fs.unlink(extraSource, (err) => {
                         if (err) throw err;
                     });
+
                     console.log('Sfx modules copied successfully!');
                 })
                 .catch((err) => {
@@ -223,7 +229,7 @@ function platformUnpacker(source, destination) {
                             unpack(
                                 join(destination, 'Payload'),
                                 destination,
-                                _7zipData.appLocation + path.sep + '*'
+                                _7zipData.appLocation + sep + '*'
                             ).then(function () {
                                 return resolve('darwin');
                             });
@@ -253,7 +259,7 @@ function platformUnpacker(source, destination) {
                         });
                     })
                     .catch((err) => {
-                        retry();
+                        retry(err);
                     });
             }
         });
@@ -266,14 +272,15 @@ function unpack(source, destination, toCopy) {
     return new Promise(function (resolve, reject) {
         return unCompress.unpack(
             source, {
-            files: toCopy == null ? '' : toCopy,
+            files: (toCopy == null ? '' : toCopy),
             targetDir: destination,
             forceOverwrite: true,
             noDirectory: true,
             quiet: true,
         },
             function (err, files, text) {
-                if (err) return reject(err);
+                if (err)
+                    return reject(err);
                 return resolve(text);
             }
         );
@@ -281,23 +288,24 @@ function unpack(source, destination, toCopy) {
 }
 
 function extraUnpack(cmd, source, destination, toCopy) {
-    var args = ['e', source, '-o' + destination];
-    var extraArgs = args.concat(toCopy).concat(['-r', '-aos']);
+    let args = ['e', source, '-o' + destination];
+    let extraArgs = args.concat(toCopy).concat(['-r', '-aos']);
     console.log('Running: ' + cmd + ' ' + extraArgs);
-    var extraUnpacker = spawnSync(cmd, extraArgs);
-    if (extraUnpacker.error) return extraUnpacker.error;
+    let extraUnpacker = spawnSync(cmd, extraArgs);
+    if (extraUnpacker.error)
+        return extraUnpacker.error;
     else if (extraUnpacker.stdout.toString())
         return extraUnpacker.stdout.toString();
 }
 
 function spawnSync(spCmd, spArgs) {
-    var doUnpack = spawn.sync(spCmd, spArgs, {
+    let doUnpack = spawn.sync(spCmd, spArgs, {
         stdio: 'pipe'
     });
     if (doUnpack.error) {
         console.error('Error 7za exited with code ' + doUnpack.error);
         console.log('resolve the problem and re-install using:');
         console.log('npm install');
-        return doUnpack;
-    } else return doUnpack;
+    }
+    return doUnpack;
 }
