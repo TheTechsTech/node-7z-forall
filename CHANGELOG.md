@@ -1,15 +1,28 @@
 Changelog
 =========
 
-### `v1.0.0` **CURRENT** 
+### `v2.0.0` to **CURRENT**
 
+ * Feature: Covert library to ESM, still Commonjs usable.
+ * Various breaking changes.
+ * Package in process of rewrite.
+
+### `v1.0.0` to `v1.1.7`
+
+ * Bug fix from oskarlh/fix-directory-separators.
+ * Use drop binary support for anything below MacOS 10.11.
+ * Coding style fixes.
+ * Update dependencies.
+ * Use Github Actions for CI.
+ * Use promise base `node-wget-fetch` for installer, fixes security audit.
+ * Use current 7zip binary versions.
  * Feature: Latest 7zip version binaries pulled at install time for all host platforms.
- 
-### `v0.4.3` to `v0.5.7` 
 
- * Feature: Platform binary included, downloaded at install time, host system no longer needs them pre installed. The binary directory added to 7za command on calls to `run` method.   
+### `v0.4.3` to `v0.5.7`
+
+ * Feature: Platform binary included, downloaded at install time, host system no longer needs them pre installed. The binary directory added to 7za command on calls to `run` method.
  * Feature: Add: `Zip.binary` method that points to option to supply path util, but instead returns object to the included binary path and filename.
-   
+
 ### `v0.4.2`
 
  * Fix: `run` returns useful error from stderr (#31)
