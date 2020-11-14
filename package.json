@@ -9,8 +9,8 @@
         "./module": "./lib/esm/index.mjs"
     },
     "scripts": {
-        "test": "mocha --recursive test/",
-        "coverage": "npx nyc@latest --reporter json --reporter text mocha --recursive test/ --timeout=0 && codecov -f coverage/coverage-final.json",
+        "test": "mocha --recursive test/ --timeout=0 --extension mjs --extension js",
+        "coverage": "npx nyc@latest --reporter json --reporter text mocha --recursive test/ --timeout=0 --extension mjs --extension js && codecov -f coverage/coverage-final.json",
         "install": "node installer.js"
     },
     "repository": {
