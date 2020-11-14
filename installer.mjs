@@ -3,12 +3,16 @@
 'use strict';
 
 import fs from 'fs-extra';
-import path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
 import spawn from 'cross-spawn';
 import unCompress from 'all-unpacker';
 import retryPromise from 'retrying-promise';
 import fetching from 'node-wget-fetch';
 import system_installer from 'system-installer';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const _7zAppUrl = 'http://7-zip.org/a/',
     _7zipData = getDataForPlatform(),
@@ -45,7 +49,7 @@ const macOsVersion = (appleOs == '') ? appleOs :
     ((versionCompare(appleOs, '10.11.12') == 1) ? '10.15' : '10.11');
 
 const zipExtraName = _7zipData.extraName;
-const extraSource = path.join(cwd, zipExtraName);
+const extraSource = join(cwd, zipExtraName);
 
 const zipFilename = (process.platform != "darwin") ? _7zipData.filename :
     ((macOsVersion == '10.15') ? _7zipData.filename[1] : _7zipData.filename[0]);
@@ -53,11 +57,10 @@ const zipFilename = (process.platform != "darwin") ? _7zipData.filename :
 const zipSfxModules = _7zipData.sfxModules;
 const zipUrl = _7zipData.url;
 
-const source = path.join(cwd, zipFilename);
-const destination = path.join(cwd, process.platform);
-const __dirname = path.resolve();
-const binaryDestination = path.join(__dirname, 'binaries', process.platform);
-const _7zCommand = path.join(
+const source = join(cwd, zipFilename);
+const destination = join(cwd, process.platform);
+const binaryDestination = join(__dirname, 'binaries', process.platform);
+const _7zCommand = join(
     binaryDestination,
     process.platform == 'win32' ? '7za.exe' : '7za'
 );
@@ -79,13 +82,13 @@ wget({
                     whatToCopy.forEach(function (s) {
                         try {
                             fs.moveSync(
-                                path.join(
+                                join(
                                     destination,
                                     _7zipData.extractFolder,
                                     _7zipData.appLocation,
                                     s
                                 ),
-                                path.join(binaryDestination, s), {
+                                join(binaryDestination, s), {
                                 overwrite: true
                             }
                             );
@@ -125,7 +128,7 @@ function makeExecutable() {
     var chmod = ['7z', '7z.so', '7za', '7zCon.sfx', '7zr'];
     chmod.forEach(function (s) {
         try {
-            fs.chmodSync(path.join(binaryDestination, s), 755);
+            fs.chmodSync(join(binaryDestination, s), 755);
         } catch (err) {
             console.error(err);
         }
@@ -209,7 +212,7 @@ function platformUnpacker(source, destination) {
                     .then(function () {
                         console.log('Decompressing: p7zipinstall.pkg/Payload');
                         unpack(
-                            path.join(
+                            join(
                                 destination,
                                 'p7zipinstall.pkg',
                                 'Payload'
@@ -218,7 +221,7 @@ function platformUnpacker(source, destination) {
                         ).then(function (data) {
                             console.log('Decompressing: Payload');
                             unpack(
-                                path.join(destination, 'Payload'),
+                                join(destination, 'Payload'),
                                 destination,
                                 _7zipData.appLocation + path.sep + '*'
                             ).then(function () {

@@ -2,7 +2,7 @@
 import { EOL } from 'os';
 import spawn from 'cross-spawn';
 import when from 'when';
-import path from 'path';
+import { normalize, join, sep } from 'path';
 import utilSwitches from './switches.mjs';
 import _7zPath from './path.mjs';
 
@@ -26,7 +26,7 @@ export default function (command, switches) {
         // add platform binary to command
         let pathTo7z = _7zPath();
         let tmpCmd = command.split(' ')[0];
-        let cmd = path.join(pathTo7z.path, tmpCmd);
+        let cmd = join(pathTo7z.path, tmpCmd);
         let args = [command.split(' ')[1]];
 
         // Parse and add command (non-switches parameters) to `args`.
@@ -34,9 +34,9 @@ export default function (command, switches) {
         let commands = command.match(regexpCommands);
         if (commands) {
             commands.forEach(function (c) {
-                c = c.replace(/\//g, path.sep);
-                c = c.replace(/\\/g, path.sep);
-                c = path.normalize(c);
+                c = c.replace(/\//g, sep);
+                c = c.replace(/\\/g, sep);
+                c = normalize(c);
                 args.push(c);
             });
         }
@@ -48,10 +48,10 @@ export default function (command, switches) {
         if (output) {
             args.pop();
             let o = output[0];
-            o = o.replace(/\//g, path.sep);
-            o = o.replace(/\\/g, path.sep);
+            o = o.replace(/\//g, sep);
+            o = o.replace(/\\/g, sep);
             o = o.replace(/"/g, '');
-            o = path.normalize(o);
+            o = normalize(o);
             args.push(o);
         }
 
