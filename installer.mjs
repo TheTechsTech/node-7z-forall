@@ -18,6 +18,7 @@ import unCompress from 'all-unpacker';
 import retryPromise from 'retrying-promise';
 import fetching from 'node-wget-fetch';
 import system_installer from 'system-installer';
+import macos_release from 'macos-release';
 
 const __filename = fileURLToPath(
   import.meta.url);
@@ -43,13 +44,8 @@ const versionCompare = function (left, right) {
   return 0;
 }
 
-try {
-  var appleOs = (process.platform == "darwin") ? require('macos-release').version : '';
-} catch (e) {
-  var appleOs = '99.99.99';
-}
-
-const macOsVersion = (versionCompare(appleOs, '10.11.12') == -1) ? '10.15' : '10.11',
+const appleOs = (process.platform == "darwin") ? macos_release.version : '99.99.99',
+  macOsVersion = (versionCompare(appleOs, '10.11.12') == 1) ? '10.15' : '10.11',
   _7zAppUrl = 'http://7-zip.org/a/',
   cwd = process.cwd(),
   binaryDestination = join(__dirname, 'binaries', process.platform);
@@ -124,19 +120,27 @@ function platformUnpacker(platformData = windowsPlatform) {
       console.log('Extracting: ' + platformData.filename);
       if (platformData.platform == 'darwin') {
         let destination = platformData.destination;
-        unpack(platformData.source, destination)
-          .then(function (data) {
-            console.log('Decompressing: p7zipinstall.pkg/Payload');
-            unpack(join(destination, 'p7zipinstall.pkg', 'Payload'), destination).then(function () {
-                console.log('Decompressing: Payload');
-                unpack(join(destination, 'Payload'), destination, platformData.appLocation + sep + '*').then(function () {
-                    return resolve('darwin');
-                  })
-                  .catch((err) => retry);
-              })
-              .catch((err) => retry);
-          })
-          .catch((err) => retry);
+        if (process.platform == 'win32') {
+          macUnpack(platformData)
+            .then(function () {
+              return resolve('darwin');
+            })
+            .catch((err) => retry);
+        } else {
+          unpack(platformData.source, destination)
+            .then(function (data) {
+              console.log('Decompressing: p7zipinstall.pkg/Payload');
+              unpack(join(destination, 'p7zipinstall.pkg', 'Payload'), destination).then(function () {
+                  console.log('Decompressing: Payload');
+                  unpack(join(destination, 'Payload'), destination, platformData.appLocation + sep + '*').then(function () {
+                      return resolve('darwin');
+                    })
+                    .catch((err) => retry);
+                })
+                .catch((err) => retry);
+            })
+            .catch((err) => retry);
+        }
       } else if (platformData.platform == 'win32') {
         unpack(platformData.source, platformData.destination)
           .then(function () {
@@ -191,6 +195,23 @@ function extraUnpack(cmd = '', source = '', destination = '', toCopy = []) {
     return extraUnpacker.error;
   else if (extraUnpacker.stdout.toString())
     return extraUnpacker.stdout.toString();
+}
+
+function macUnpack(dataFor = windowsPlatform) {
+  return new Promise(function (resolve, reject) {
+    let macUnpacker = extraUnpack(join(__dirname, 'binaries', process.platform, '7za.exe'), dataFor.source, dataFor.destination);
+    if (macUnpacker.stdout.toString()) {
+      console.log('Decompressing: ' + 'p7zipinstall.pkg/Payload');
+      unpack(join(dataFor.destination, 'p7zipinstall.pkg', 'Payload'), dataFor.destination).then(function () {
+          console.log('Decompressing: Payload');
+          unpack(join(dataFor.destination, 'Payload'), dataFor.destination, dataFor.appLocation + sep + '*').then(function () {
+              return resolve('darwin');
+            })
+            .catch((err) => reject);
+        })
+        .catch((err) => reject);
+    }
+  });
 }
 
 function spawnSync(spCmd = '', spArgs = []) {
