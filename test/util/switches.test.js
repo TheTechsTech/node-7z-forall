@@ -52,6 +52,7 @@ describe('Utility: `switches`', function () {
       m0  : '=BCJ',
       m1  : '=LZMA:d=21',
       p   : 'My Super Pasw,àù£*',
+      sfx : '7zSD.sfx',
     });
     expect(r).to.contain('-ssc');
     expect(r).to.contain('-ssw');
@@ -59,6 +60,7 @@ describe('Utility: `switches`', function () {
     expect(r).to.contain('-m1=LZMA:d=21');
     expect(r).to.contain('-p"My Super Pasw,àù£*"');
     expect(r).to.contain('-y');
+    expect(r).to.contain('-sfx7zSD.sfx');
   });
 
   it('should works with the `raw` switch', function () {

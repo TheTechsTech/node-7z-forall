@@ -1,7 +1,7 @@
 {
     "name": "node-7z-forall",
-    "version": "2.0.0",
-    "description": "A Node.js wrapper for 7-Zip with binaries for Linux, Windows, and Mac OSX.",
+    "version": "2.1.0",
+    "description": "A CommonJs and ESM wrapper for 7-Zip, pulling in binaries for Linux, Windows, and Mac OSX, with methods to create SFX self extracting 7z archives targeting a different platform.",
     "type": "commonjs",
     "main": "lib/index.js",
     "exports": {
@@ -24,6 +24,7 @@
         "7zr",
         "p7zip",
         "7zip",
+        "sfx",
         "binary",
         "wrapper",
         "Mac OS X",
