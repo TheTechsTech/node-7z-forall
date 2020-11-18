@@ -63,6 +63,7 @@ const windowsPlatform = {
   binaryDestinationDir: join(__dirname, 'binaries', 'win32'),
   sfxModules: ['7zr.exe', '7zS2.sfx', '7zS2con.sfx', '7zSD.sfx'],
   platform: 'win32',
+  binary: '7za.exe',
   extraSourceFile: join(cwd, 'win32', 'lzma1900.7z'),
 };
 
@@ -75,9 +76,10 @@ const windowsOtherPlatform = {
   extractFolder: '',
   appLocation: '',
   binaryFiles: ['Far', 'x64', '7za.dll', '7za.exe', '7zxa.dll'],
-  binaryDestinationDir: join(__dirname, 'binaries', 'win32', 'other'),
+  binaryDestinationDir: join(__dirname, 'binaries', 'win32', 'other32'),
   sfxModules: ['7zr.exe', '7zS2.sfx', '7zS2con.sfx', '7zSD.sfx'],
-  platform: 'other32',
+  platform: 'win32',
+  binary: '7za.exe',
   extraSourceFile: join(cwd, 'other32', 'lzma1604.7z'),
 };
 
@@ -93,6 +95,7 @@ const linuxPlatform = {
   binaryDestinationDir: join(__dirname, 'binaries', 'linux'),
   sfxModules: ['7zS2.sfx', '7zS2con.sfx', '7zSD.sfx'],
   platform: 'linux',
+  binary: '7za',
   extraSourceFile: join(cwd, 'linux', 'lzma1604.7z'),
 };
 
@@ -109,6 +112,7 @@ const appleMacPlatform = {
   binaryDestinationDir: join(__dirname, 'binaries', 'darwin'),
   sfxModules: ['7zS2.sfx', '7zS2con.sfx', '7zSD.sfx'],
   platform: 'darwin',
+  binary: '7za',
   extraSourceFile: join(cwd, 'darwin', 'lzma1604.7z'),
 };
 
@@ -124,6 +128,7 @@ const windowsMacPlatform = {
   binaryDestinationDir: join(__dirname, 'binaries', 'darwin'),
   sfxModules: [],
   platform: 'darwin',
+  binary: '7za',
   extraSourceFile: join(cwd, 'darwin', 'lzma1604.7z'),
 };
 
@@ -154,8 +159,7 @@ function platformUnpacker(platformData = windowsPlatform) {
           macUnpack(platformData)
             .then(function () {
               return resolve('darwin');
-            })
-            .catch((err) => retry('darwin'));
+            }).catch((err) => retry(err));
         } else {
           unpack(platformData.source, destination)
             .then(function (data) {
@@ -191,15 +195,15 @@ function platformUnpacker(platformData = windowsPlatform) {
               return resolve('linux');
           })
           .catch((err) => retry(err));
-      } else if (platformData.platform != '') {
+      } else if (fetching.isString(platformData.platform)) {
         unpack(platformData.source, platformData.destination)
           .then(function () {
             return resolve(platformData.platform);
           })
           .catch((err) => retry(err));
       }
-    }).catch((err) => console.error(err));
-  }).catch((err) => console.error(err));
+    }).catch((err) => retry(err));
+  }).catch((err) => retry(err));
 }
 
 function unpack(source, destination, toCopy) {
@@ -229,15 +233,29 @@ function extraUnpack(cmd = '', source = '', destination = '', toCopy = []) {
   return spawnSync(cmd, extraArgs);
 }
 
-function macUnpack(dataFor = windowsMacPlatform) {
+function macUnpack(dataFor = windowsMacPlatform, dataForOther = windowsOtherPlatform) {
   return new Promise(function (resolve, reject) {
-    extraUnpack(join(__dirname, 'binaries', 'win32', 'other', '7za.exe'), dataFor.source, dataFor.destination);
-    console.log('Decompressing: ' + 'p7zip-16.02-macos10.15');
-    unpack(join(dataFor.destination, 'p7zip-16.02-macos10.15'), dataFor.destination)
-      .then(function () {
-        return resolve('darwin');
+    retrieve({
+        url: dataForOther.url + dataForOther.filename,
+        dest: '.' + sep + '7z-extra.7z'
       })
-      .catch((err) => resolve('darwin'));
+      .then(function () {
+        let destination = join(cwd, 'other');
+        unpack(join(__dirname, '7z-extra.7z'), destination)
+          .then(function () {
+            extraUnpack(join(__dirname, 'other', '7za.exe'), dataFor.source, dataFor.destination);
+            console.log('Decompressing: ' + 'p7zip-16.02-macos10.15');
+            unpack(join(dataFor.destination, 'p7zip-16.02-macos10.15'), dataFor.destination)
+              .then(function () {
+                fs.removeSync(destination);
+                return resolve('darwin');
+              })
+              .catch((err) => {
+                fs.removeSync(destination);
+                return resolve('darwin')
+              });
+          }).catch((err) => reject);
+      }).catch((err) => reject);
   });
 }
 
@@ -265,7 +283,6 @@ function makeExecutable(binary = [], binaryFolder = '') {
   });
 }
 
-
 [windowsOtherPlatform, windowsPlatform, linuxPlatform, (process.platform == 'win32' ? windowsMacPlatform : appleMacPlatform)].forEach(function (dataFor) {
   fs.mkdir(dataFor.destination, (err) => {
     if (err) {}
@@ -287,13 +304,12 @@ function makeExecutable(binary = [], binaryFolder = '') {
                     overwrite: true
                   });
                   makeExecutable([file], binaryDestination);
-                } else if (dataFor.platform == process.platform ||
-                  (process.platform == 'win32' && dataFor.platform == 'other32')) {
+                } else if (dataFor.platform == process.platform) {
                   fs.moveSync(from, to, {
                     overwrite: true
                   });
 
-                  if (dataFor.platform.includes('32') == false)
+                  if (dataFor.platform != 'win32')
                     makeExecutable([file], dataFor.binaryDestinationDir);
                 } else {
                   if (file == 'Codecs')
@@ -308,24 +324,29 @@ function makeExecutable(binary = [], binaryFolder = '') {
             console.log('Binaries copied successfully!');
             fs.unlinkSync(dataFor.source);
 
-            if (dataFor.platform.includes('32')) {
-              extraUnpack(join(__dirname, 'binaries', dataFor.platform, '7za.exe'),
-                dataFor.extraSourceFile,
-                binaryDestination,
-                dataFor.sfxModules
-              );
+            if (process.platform == dataFor.platform) {
+              setTimeout(function () {
+                extraUnpack(join(__dirname, 'binaries', dataFor.platform, dataFor.binary),
+                  dataFor.extraSourceFile,
+                  binaryDestination,
+                  dataFor.sfxModules
+                );
 
-              fs.unlink(dataFor.extraSourceFile, (err) => {
-                if (err) throw err;
-                dataFor.sfxModules.forEach(function (file) {
-                  let name = file.replace(/.sfx/g, dataFor.platform + '.sfx');
-                  let to = join(binaryDestination, name);
-                  fs.renameSync(join(binaryDestination, file), to);
-                  console.log('Sfx module ' + name + ' copied successfully!');
+                fs.unlink(dataFor.extraSourceFile, (err) => {
+                  if (err) throw err;
+                  dataFor.sfxModules.forEach(function (file) {
+                    let name = file.replace(/.sfx/g, (dataFor.destination.includes('win32') ? 'win32' : 'other32') + '.sfx');
+                    let to = join(binaryDestination, name);
+                    fs.renameSync(join(binaryDestination, file), to);
+                    console.log('Sfx module ' + name + ' copied successfully!');
+                  });
+                  fs.removeSync(dataFor.destination);
                 });
-              });
+              }, 5000);
+            } else {
+              fs.removeSync(dataFor.destination);
             }
-            fs.removeSync(dataFor.destination);
+
           })
           .catch((err) => {
             console.error('Unpacking for platform failed.');
