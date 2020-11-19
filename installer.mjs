@@ -246,13 +246,21 @@ function macUnpack(dataFor = windowsMacPlatform, dataForOther = windowsOtherPlat
             extraUnpack(join(__dirname, 'other', '7za.exe'), dataFor.source, dataFor.destination);
             console.log('Decompressing: ' + 'p7zip-16.02-macos10.15');
             unpack(join(dataFor.destination, 'p7zip-16.02-macos10.15'), dataFor.destination)
-              .then(function () {
-                fs.removeSync(destination);
-                return resolve('darwin');
+              .then(() => {
+                fs.emptyDir(destination).then(function () {
+                  fs.unlink(join(__dirname, '7z-extra.7z')).then(() => {
+                    fs.removeSync(destination);
+                    return resolve('darwin');
+                  });
+                });
               })
-              .catch((err) => {
-                fs.removeSync(destination);
-                return resolve('darwin')
+              .catch(() => {
+                fs.emptyDir(destination).then(function () {
+                  fs.unlink(join(__dirname, '7z-extra.7z')).then(() => {
+                    fs.removeSync(destination);
+                    return resolve('darwin');
+                  });
+                });
               });
           }).catch((err) => reject);
       }).catch((err) => reject);
@@ -299,11 +307,13 @@ function makeExecutable(binary = [], binaryFolder = '') {
                 let to = join(dataFor.binaryDestinationDir, file);
                 if (file == '7zCon.sfx') {
                   file = '7zCon' + dataFor.platform + '.sfx';
-                  to = join(binaryDestination, file);
+                  let location = join(binaryDestination, (process.platform == 'win32' ? 'other32' : ''));
+                  to = join(location, file);
                   fs.moveSync(from, to, {
                     overwrite: true
                   });
-                  makeExecutable([file], binaryDestination);
+                  makeExecutable([file], location);
+                  console.log('Sfx module ' + file + ' copied successfully!');
                 } else if (dataFor.platform == process.platform) {
                   fs.moveSync(from, to, {
                     overwrite: true
@@ -317,7 +327,7 @@ function makeExecutable(binary = [], binaryFolder = '') {
                   fs.unlinkSync(from);
                 }
               } catch (err) {
-                throw (err);
+                //throw (err);
               }
             });
 
@@ -335,8 +345,8 @@ function makeExecutable(binary = [], binaryFolder = '') {
                 fs.unlink(dataFor.extraSourceFile, (err) => {
                   if (err) throw err;
                   dataFor.sfxModules.forEach(function (file) {
-                    let name = file.replace(/.sfx/g, (dataFor.destination.includes('win32') ? 'win32' : 'other32') + '.sfx');
-                    let to = join(binaryDestination, name);
+                    let name = file.replace(/.sfx/g, (dataFor.destination.includes('win32') ? '' : 'other32') + '.sfx');
+                    let to = join(binaryDestination, (dataFor.destination.includes('other32') ? 'other32' : ''), name);
                     fs.renameSync(join(binaryDestination, file), to);
                     console.log('Sfx module ' + name + ' copied successfully!');
                   });
