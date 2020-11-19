@@ -10,8 +10,6 @@ import {
   dirname,
   join,
   sep,
-  isAbsolute,
-  resolve as resolver,
 } from 'path';
 import spawn from 'cross-spawn';
 import unCompress from 'all-unpacker';
@@ -24,7 +22,7 @@ const __filename = fileURLToPath(
   import.meta.url);
 const __dirname = dirname(__filename);
 
-const versionCompare = function (left, right) {
+const versionCompare = (left, right) => {
   if (typeof left + typeof right != 'stringstring')
     return false;
 
@@ -137,7 +135,7 @@ function retrieve(path = {
   dest: ''
 }) {
   console.log('Downloading ' + path.url);
-  return new Promise(function (resolve, reject) {
+  return new Promise((resolve, reject) => {
     fetching.wget(path.url, path.dest)
       .then((info) => resolve(info))
       .catch((err) => reject('Error downloading file: ' + err));
@@ -147,26 +145,26 @@ function retrieve(path = {
 function platformUnpacker(platformData = windowsPlatform) {
   return new retryPromise({
     retries: 5
-  }, function (resolve, retry) {
+  }, (resolve, retry) => {
     retrieve({
       url: platformData.url + platformData.filename,
       dest: platformData.source
-    }).then(function () {
+    }).then(() => {
       console.log('Extracting: ' + platformData.filename);
       if (platformData.platform == 'darwin') {
         let destination = platformData.destination;
         if (process.platform == 'win32') {
           macUnpack(platformData)
-            .then(function () {
+            .then(() => {
               return resolve('darwin');
             }).catch((err) => retry(err));
         } else {
           unpack(platformData.source, destination)
-            .then(function (data) {
+            .then((data) => {
               console.log('Decompressing: p7zipinstall.pkg/Payload');
-              unpack(join(destination, 'p7zipinstall.pkg', 'Payload'), destination).then(function () {
+              unpack(join(destination, 'p7zipinstall.pkg', 'Payload'), destination).then(() => {
                   console.log('Decompressing: Payload');
-                  unpack(join(destination, 'Payload'), destination, platformData.appLocation + sep + '*').then(function () {
+                  unpack(join(destination, 'Payload'), destination, platformData.appLocation + sep + '*').then(() => {
                       return resolve('darwin');
                     })
                     .catch((err) => retry(err));
@@ -177,18 +175,18 @@ function platformUnpacker(platformData = windowsPlatform) {
         }
       } else if (platformData.platform == 'win32') {
         unpack(platformData.source, platformData.destination)
-          .then(function () {
+          .then(() => {
             return resolve('win32');
           })
           .catch((err) => retry(err));
       } else if (platformData.platform == 'linux') {
         unpack(platformData.source, platformData.destination)
-          .then(function () {
+          .then(() => {
             const system = system_installer.packager();
             const toInstall = (system.packager == 'yum' || system.packager == 'dnf') ?
               'glibc.i686' : 'libc6-i386';
             if (process.platform == 'linux')
-              system_installer.installer(toInstall).then(function () {
+              system_installer.installer(toInstall).then(() => {
                 return resolve('linux');
               });
             else
@@ -197,7 +195,7 @@ function platformUnpacker(platformData = windowsPlatform) {
           .catch((err) => retry(err));
       } else if (fetching.isString(platformData.platform)) {
         unpack(platformData.source, platformData.destination)
-          .then(function () {
+          .then(() => {
             return resolve(platformData.platform);
           })
           .catch((err) => retry(err));
@@ -207,7 +205,7 @@ function platformUnpacker(platformData = windowsPlatform) {
 }
 
 function unpack(source, destination, toCopy) {
-  return new Promise(function (resolve, reject) {
+  return new Promise((resolve, reject) => {
     return unCompress.unpack(
       source, {
         files: (toCopy == null ? '' : toCopy),
@@ -216,11 +214,11 @@ function unpack(source, destination, toCopy) {
         noDirectory: true,
         quiet: true,
       },
-      function (err, files, text) {
+      (err, files, text) => {
         if (err)
           return reject(err);
         console.log(text);
-        return resolve(text);
+        return resolve(files);
       }
     );
   });
@@ -234,20 +232,20 @@ function extraUnpack(cmd = '', source = '', destination = '', toCopy = []) {
 }
 
 function macUnpack(dataFor = windowsMacPlatform, dataForOther = windowsOtherPlatform) {
-  return new Promise(function (resolve, reject) {
+  return new Promise((resolve, reject) => {
     retrieve({
-        url: dataForOther.url + dataForOther.filename,
+        url: dataForOther.url + '7z1805-extra.7z',
         dest: '.' + sep + '7z-extra.7z'
       })
-      .then(function () {
+      .then(() => {
         let destination = join(cwd, 'other');
         unpack(join(__dirname, '7z-extra.7z'), destination)
-          .then(function () {
+          .then(() => {
             extraUnpack(join(__dirname, 'other', '7za.exe'), dataFor.source, dataFor.destination);
             console.log('Decompressing: ' + 'p7zip-16.02-macos10.15');
             unpack(join(dataFor.destination, 'p7zip-16.02-macos10.15'), dataFor.destination)
               .then(() => {
-                fs.emptyDir(destination).then(function () {
+                fs.emptyDir(destination).then(() => {
                   fs.unlink(join(__dirname, '7z-extra.7z')).then(() => {
                     fs.removeSync(destination);
                     return resolve('darwin');
@@ -255,7 +253,7 @@ function macUnpack(dataFor = windowsMacPlatform, dataForOther = windowsOtherPlat
                 });
               })
               .catch(() => {
-                fs.emptyDir(destination).then(function () {
+                fs.emptyDir(destination).then(() => {
                   fs.unlink(join(__dirname, '7z-extra.7z')).then(() => {
                     fs.removeSync(destination);
                     return resolve('darwin');
@@ -280,7 +278,7 @@ function spawnSync(spCmd = '', spArgs = []) {
 }
 
 function makeExecutable(binary = [], binaryFolder = '') {
-  binary.forEach(function (file) {
+  binary.forEach((file) => {
     try {
       if (file == 'Codecs')
         file = 'Codecs' + sep + 'Rar.so'
@@ -291,17 +289,17 @@ function makeExecutable(binary = [], binaryFolder = '') {
   });
 }
 
-[windowsOtherPlatform, windowsPlatform, linuxPlatform, (process.platform == 'win32' ? windowsMacPlatform : appleMacPlatform)].forEach(function (dataFor) {
+[windowsOtherPlatform, windowsPlatform, linuxPlatform, (process.platform == 'win32' ? windowsMacPlatform : appleMacPlatform)].forEach((dataFor) => {
   fs.mkdir(dataFor.destination, (err) => {
     if (err) {}
     retrieve({
         url: _7zAppUrl + dataFor.extraName,
         dest: dataFor.extraSourceFile
       })
-      .then(function () {
+      .then(() => {
         platformUnpacker(dataFor)
-          .then(function () {
-            dataFor.binaryFiles.forEach(function (file) {
+          .then(() => {
+            dataFor.binaryFiles.forEach((file) => {
               try {
                 let from = join(dataFor.destination, dataFor.extractFolder, dataFor.appLocation, file);
                 let to = join(dataFor.binaryDestinationDir, file);
@@ -327,7 +325,7 @@ function makeExecutable(binary = [], binaryFolder = '') {
                   fs.unlinkSync(from);
                 }
               } catch (err) {
-                //throw (err);
+                console.error(err);
               }
             });
 
@@ -335,7 +333,7 @@ function makeExecutable(binary = [], binaryFolder = '') {
             fs.unlinkSync(dataFor.source);
 
             if (process.platform == dataFor.platform) {
-              setTimeout(function () {
+              setTimeout(() => {
                 extraUnpack(join(__dirname, 'binaries', dataFor.platform, dataFor.binary),
                   dataFor.extraSourceFile,
                   binaryDestination,
@@ -344,10 +342,11 @@ function makeExecutable(binary = [], binaryFolder = '') {
 
                 fs.unlink(dataFor.extraSourceFile, (err) => {
                   if (err) throw err;
-                  dataFor.sfxModules.forEach(function (file) {
+                  dataFor.sfxModules.forEach((file) => {
                     let name = file.replace(/.sfx/g, (dataFor.destination.includes('win32') ? '' : 'other32') + '.sfx');
                     let to = join(binaryDestination, (dataFor.destination.includes('other32') ? 'other32' : ''), name);
-                    fs.renameSync(join(binaryDestination, file), to);
+                    if (name.includes('other32'))
+                      fs.renameSync(join(binaryDestination, file), to);
                     console.log('Sfx module ' + name + ' copied successfully!');
                   });
                   fs.removeSync(dataFor.destination);
