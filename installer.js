@@ -309,10 +309,6 @@ function makeExecutable(binary = [], binaryFolder = '') {
 
                   if (dataFor.platform != 'win32')
                     makeExecutable([file], dataFor.binaryDestinationDir);
-                } else {
-                  if (file == 'Codecs')
-                    from = join(dataFor.destination, dataFor.extractFolder, dataFor.appLocation, file, 'Rar.so');
-                  fs.unlinkSync(from);
                 }
               } catch (err) {
                 console.error(err);
@@ -323,25 +319,27 @@ function makeExecutable(binary = [], binaryFolder = '') {
             fs.unlinkSync(dataFor.source);
 
             if (process.platform == dataFor.platform) {
-              //setTimeout(() => {
-              extraUnpack(join(__dirname, 'binaries', dataFor.platform, dataFor.binary),
-                dataFor.extraSourceFile,
-                binaryDestination,
-                dataFor.sfxModules
-              );
+              setTimeout(() => {
+                extraUnpack(join(dataFor.binaryDestinationDir, dataFor.binary),
+                  dataFor.extraSourceFile,
+                  binaryDestination,
+                  dataFor.sfxModules
+                );
 
-              fs.unlink(dataFor.extraSourceFile, (err) => {
-                if (err) throw err;
-                dataFor.sfxModules.forEach((file) => {
-                  let name = file.replace(/.sfx/g, (dataFor.destination.includes('win32') ? '' : 'other32') + '.sfx');
-                  let to = join(binaryDestination, (name.includes('other32') ? 'other32' : ''), name);
-                  if (to.includes('other32'))
-                    fs.renameSync(join(binaryDestination, file), to);
-                  console.log('Sfx module ' + name + ' copied successfully!');
+                fs.unlink(dataFor.extraSourceFile, (err) => {
+                  if (err) throw err;
+                  dataFor.sfxModules.forEach((file) => {
+                    let name = file.replace(/.sfx/g, (dataFor.destination.includes('win32') ? '' : 'other32') + '.sfx');
+                    let to = join(binaryDestination, ((name.includes('other32') && process.platform == 'win32') ? 'other32' : ''), name);
+                    if (name.includes('other32')) {
+                      fs.renameSync(join(binaryDestination, file), to);
+                    }
+
+                    console.log('Sfx module ' + name + ' copied successfully!');
+                  });
+                  fs.removeSync(dataFor.destination);
                 });
-                fs.removeSync(dataFor.destination);
-              });
-              // }, 5000);
+              }, 5000);
             } else {
               fs.removeSync(dataFor.destination);
             }
