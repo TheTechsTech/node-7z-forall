@@ -94,7 +94,7 @@ const appleMacPlatform = {
   url: 'https://raw.githubusercontent.com/rudix-mac/packages/master/',
   filename: macVersion,
   extraName: 'lzma1604.7z',
-  extractFolder: 'Payload~/',
+  extractFolder: '',
   appLocation: 'usr/local/lib/p7zip',
   binaryFiles: ['7z', '7z.so', '7za', '7zCon.sfx', '7zr', 'Codecs'],
   binaryDestinationDir: join(__dirname, 'binaries', 'darwin'),
