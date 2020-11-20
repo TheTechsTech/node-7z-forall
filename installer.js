@@ -175,7 +175,7 @@ function platformUnpacker(platformData = windowsPlatform) {
           .catch((err) => retry(err));
       }
     }).catch((err) => retry(err));
-  }).catch((err) => retry(err));
+  }).catch((err) => console.error(err));
 }
 
 function unpack(source, destination, toCopy) {
@@ -331,7 +331,7 @@ function makeExecutable(binary = [], binaryFolder = '') {
           })
           .catch((err) => {
             console.error('Unpacking for platform failed.');
-            console.error(err);
+            throw (err);
           });
       })
       .catch((err) => {
