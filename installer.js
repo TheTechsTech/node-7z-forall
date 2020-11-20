@@ -104,22 +104,6 @@ const appleMacPlatform = {
   extraSourceFile: join(cwd, 'darwin', 'lzma1604.7z'),
 };
 
-const windowsMacPlatform = {
-  source: join(cwd, 'p7zip-16.02-macos10.15.pkg'),
-  destination: join(cwd, 'darwin'),
-  url: 'https://raw.githubusercontent.com/rudix-mac/packages/master/',
-  filename: 'p7zip-16.02-macos10.15.pkg',
-  extraName: 'lzma1604.7z',
-  extractFolder: '',
-  appLocation: 'usr/local/lib/p7zip',
-  binaryFiles: ['7z', '7z.so', '7za', '7zCon.sfx', '7zr', 'Codecs'],
-  binaryDestinationDir: join(__dirname, 'binaries', 'darwin'),
-  sfxModules: [],
-  platform: 'darwin',
-  binary: '7za',
-  extraSourceFile: join(cwd, 'darwin', 'lzma1604.7z'),
-};
-
 function retrieve(path = {
   url: '',
   dest: ''
@@ -221,7 +205,7 @@ function extraUnpack(cmd = '', source = '', destination = '', toCopy = []) {
   return spawnSync(cmd, extraArgs);
 }
 
-function macUnpack(dataFor = windowsMacPlatform, dataForOther = windowsOtherPlatform) {
+function macUnpack(dataFor = appleMacPlatform, dataForOther = windowsOtherPlatform) {
   return new Promise((resolve, reject) => {
     retrieve({
         url: dataForOther.url + '7z1805-extra.7z',
@@ -279,7 +263,7 @@ function makeExecutable(binary = [], binaryFolder = '') {
   });
 }
 
-[windowsOtherPlatform, windowsPlatform, linuxPlatform, (process.platform == 'win32' ? windowsMacPlatform : appleMacPlatform)].forEach((dataFor) => {
+[windowsOtherPlatform, windowsPlatform, linuxPlatform, appleMacPlatform].forEach((dataFor) => {
   fs.mkdir(dataFor.destination, (err) => {
     if (err) {}
     retrieve({
