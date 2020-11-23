@@ -45,7 +45,7 @@ describe('Method: `Zip.createSfx`', function () {
           executeParameters: '-d'
         },
         'console',
-        'linux',
+        'darwin',
         '.pkg',
         true)
       .then(function (data) {
