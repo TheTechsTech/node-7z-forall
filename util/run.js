@@ -27,6 +27,7 @@ module.exports = function (command, switches, override = false) {
     let pathTo7z = _7zPath({}, override);
     let tmpCmd = command.split(' ')[0];
     let cmd = path.join(pathTo7z.path, tmpCmd);
+    //let cmd = pathTo7z.filepath;
     let args = [command.split(' ')[1]];
 
     // Parse and add command (non-switches parameters) to `args`.
@@ -42,7 +43,7 @@ module.exports = function (command, switches, override = false) {
     }
 
     // Special treatment for the output switch because it is exposed as a
-    // parameter in the API and not as a option. Plus wilcards can be passed.
+    // parameter in the API and not as a option. Plus wildcards can be passed.
     let regexpOutput = /-o"((?:\\.|[^"\\])*)"/g;
     let output = command.match(regexpOutput);
     if (output) {

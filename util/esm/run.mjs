@@ -49,7 +49,7 @@ export default function (command, switches, override = false) {
     }
 
     // Special treatment for the output switch because it is exposed as a
-    // parameter in the API and not as a option. Plus wilcards can be passed.
+    // parameter in the API and not as a option. Plus wildcards can be passed.
     let regexpOutput = /-o"((?:\\.|[^"\\])*)"/g;
     let output = command.match(regexpOutput);
     if (output) {

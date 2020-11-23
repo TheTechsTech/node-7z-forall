@@ -7,7 +7,7 @@ module.exports = function (options, override = false) {
   if ((options) && (type == "object") && (options.hasOwnProperty('path'))) {
     return options.path;
   } else {
-    let binaryPath = path.join(__dirname, "..", "binaries", (override == true ? process.platform + sep + 'other32' : process.platform));
+    let binaryPath = path.join(__dirname, "..", "binaries", (override == true ? process.platform + path.sep + 'other32' : process.platform));
     let binaryFilename = (process.platform == "win32") ? '7za.exe' : '7za';
     return {
       path: binaryPath,

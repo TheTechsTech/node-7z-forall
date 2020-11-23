@@ -16,6 +16,46 @@ describe('Method: `Zip.createSfx`', function () {
       });
   });
 
+  it('should return successfully on an Linux Sfx build', function (done) {
+    createSfx('test', '*.js', './test/', {
+          runProgram: 'doesnotstart.sh',
+          directory: '/',
+          installPath: '/home/',
+          executeFile: 'notonLinux',
+          executeParameters: '-d'
+        },
+        'console',
+        'linux',
+        '.elf',
+        true)
+      .then(function (data) {
+        expect(data).to.exist;
+        expect(fs.existsSync('./test/SfxPackages/test.elf')).to.be.eql(true);
+        fs.removeSync('./test/SfxPackages');
+        done();
+      });
+  });
+
+  it('should return successfully on an MacOS Sfx build', function (done) {
+    createSfx('test', '*.js', './test/', {
+          runProgram: 'doesnotstart.app',
+          directory: '/',
+          installPath: '/home/',
+          executeFile: 'notonMac',
+          executeParameters: '-d'
+        },
+        'console',
+        'linux',
+        '.pkg',
+        true)
+      .then(function (data) {
+        expect(data).to.exist;
+        expect(fs.existsSync('./test/SfxPackages/test.pkg')).to.be.eql(true);
+        fs.removeSync('./test/SfxPackages');
+        done();
+      });
+  });
+
   it('should return entries on progress and successfully', function (done) {
     createSfx('test', ['*.md'])
       .progress(function (entries) {
