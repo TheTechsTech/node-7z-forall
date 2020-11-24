@@ -26,8 +26,7 @@ describe('Method: `Zip.createSfx`', function () {
         },
         'console',
         'linux',
-        '.elf',
-        true)
+        '.elf')
       .then(function (data) {
         expect(data).to.exist;
         expect(fs.existsSync('./test/SfxPackages/test.elf')).to.be.eql(true);
@@ -46,8 +45,7 @@ describe('Method: `Zip.createSfx`', function () {
         },
         'console',
         'darwin',
-        '.pkg',
-        true)
+        '.pkg')
       .then(function (data) {
         expect(data).to.exist;
         expect(fs.existsSync('./test/SfxPackages/test.pkg')).to.be.eql(true);

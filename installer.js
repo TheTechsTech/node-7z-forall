@@ -81,7 +81,7 @@ const linuxPlatform = {
   appLocation: 'bin',
   binaryFiles: ['7z', '7z.so', '7za', '7zCon.sfx', '7zr', 'Codecs'],
   binaryDestinationDir: join(__dirname, 'binaries', 'linux'),
-  sfxModules: ['7zS2.sfx', '7zS2con.sfx', '7zSD.sfx'],
+  sfxModules: null,
   platform: 'linux',
   binary: '7za',
   extraSourceFile: join(cwd, 'linux', 'lzma1604.7z'),
@@ -98,7 +98,7 @@ const appleMacPlatform = {
   appLocation: 'usr/local/lib/p7zip',
   binaryFiles: ['7z', '7z.so', '7za', '7zCon.sfx', '7zr', 'Codecs'],
   binaryDestinationDir: join(__dirname, 'binaries', 'darwin'),
-  sfxModules: ['7zS2.sfx', '7zS2con.sfx', '7zSD.sfx'],
+  sfxModules: null,
   platform: 'darwin',
   binary: '7za',
   extraSourceFile: join(cwd, 'darwin', 'lzma1604.7z'),
@@ -120,7 +120,7 @@ function platformUnpacker(platformData = windowsPlatform) {
   return new retryPromise({
     retries: 5
   }, (resolve, retry) => {
-    retrieve({
+    return retrieve({
       url: platformData.url + platformData.filename,
       dest: platformData.source
     }).then(() => {
@@ -263,7 +263,7 @@ function makeExecutable(binary = [], binaryFolder = '') {
   });
 }
 
-[windowsOtherPlatform, windowsPlatform, linuxPlatform, appleMacPlatform].forEach((dataFor) => {
+[linuxPlatform, appleMacPlatform, windowsPlatform, windowsOtherPlatform].forEach((dataFor) => {
   fs.mkdir(dataFor.destination, (err) => {
     if (err) {}
     retrieve({
@@ -302,36 +302,32 @@ function makeExecutable(binary = [], binaryFolder = '') {
             console.log('Binaries copied successfully!');
             fs.unlinkSync(dataFor.source);
 
-            if (process.platform == dataFor.platform) {
-              setTimeout(() => {
-                extraUnpack(join(dataFor.binaryDestinationDir, dataFor.binary),
+            if (dataFor.sfxModules) {
+              try {
+                extraUnpack(join(binaryDestination, (process.platform == "win32") ? '7za.exe' : '7za'),
                   dataFor.extraSourceFile,
-                  binaryDestination,
+                  dataFor.binaryDestinationDir,
                   dataFor.sfxModules
                 );
 
-                fs.unlink(dataFor.extraSourceFile, (err) => {
-                  if (err) throw err;
-                  dataFor.sfxModules.forEach((file) => {
-                    let name = file.replace(/.sfx/g, (dataFor.destination.includes('win32') ? '' : 'other32') + '.sfx');
-                    let to = join(binaryDestination, ((name.includes('other32') && process.platform == 'win32') ? 'other32' : ''), name);
-                    if (name.includes('other32')) {
-                      fs.renameSync(join(binaryDestination, file), to);
-                    }
+                dataFor.sfxModules.forEach((file) => {
+                  let name = file.replace(/.sfx/g, (dataFor.destination.includes('win32') ? 'win32' : 'other32') + '.sfx');
+                  let to = join(dataFor.binaryDestinationDir, name);
+                  fs.renameSync(join(dataFor.binaryDestinationDir, file), to);
 
-                    console.log('Sfx module ' + name + ' copied successfully!');
-                  });
-                  fs.removeSync(dataFor.destination);
+                  console.log('Sfx module ' + name + ' copied successfully!');
                 });
-              }, 5000);
-            } else {
-              fs.removeSync(dataFor.destination);
+              } catch (err) {
+                console.error(err);
+              }
             }
+            fs.unlinkSync(dataFor.extraSourceFile);
+            fs.removeSync(dataFor.destination);
 
           })
           .catch((err) => {
             console.error('Unpacking for platform failed.');
-            throw (err);
+            throw new Error(err);
           });
       })
       .catch((err) => {
