@@ -32,6 +32,12 @@ describe('Method: `Zip.createSfx`', function () {
         expect(fs.existsSync('./test/SfxPackages/test.elf')).to.be.eql(true);
         fs.removeSync('./test/SfxPackages');
         done();
+      })
+      .catch(function (err) {
+        console.error('No error should be displayed!');
+        console.error(err);
+        expect(err).to.exist;
+        done();
       });
   });
 
@@ -50,6 +56,12 @@ describe('Method: `Zip.createSfx`', function () {
         expect(data).to.exist;
         expect(fs.existsSync('./test/SfxPackages/test.pkg')).to.be.eql(true);
         fs.removeSync('./test/SfxPackages');
+        done();
+      })
+      .catch(function (err) {
+        console.error('No error should be displayed!');
+        console.error(err);
+        expect(err).to.exist;
         done();
       });
   });
