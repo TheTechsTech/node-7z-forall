@@ -318,31 +318,33 @@ let extractionPromises = [];
   extractionPromises.push(extracted);
 });
 
-Promise.all(extractionPromises).then((extracted) => {
-  extracted.forEach(function (dataFor) {
-    if (dataFor.sfxModules && dataFor.platform == process.platform) {
-      try {
-        const directory = (process.platform == "win32") ? dataFor.binaryDestinationDir : binaryDestination;
-        extraUnpack(join(binaryDestination, (process.platform == "win32") ? '7za.exe' : '7za'),
-          dataFor.extraSourceFile,
-          directory,
-          dataFor.sfxModules
-        );
+Promise.all(extractionPromises)
+  .then((extracted) => {
+    extracted.forEach(function (dataFor) {
+      if (dataFor.sfxModules && dataFor.platform == process.platform) {
+        try {
+          const directory = (process.platform == "win32") ? dataFor.binaryDestinationDir : binaryDestination;
+          extraUnpack(join(binaryDestination, (process.platform == "win32") ? '7za.exe' : '7za'),
+            dataFor.extraSourceFile,
+            directory,
+            dataFor.sfxModules
+          );
 
-        dataFor.sfxModules.forEach((file) => {
-          let name = file.replace(/.sfx/g, (dataFor.destination.includes('win32') ? 'win32' : 'other32') + '.sfx');
-          let to = join(directory, name);
-          if (!file.includes('7zr.exe'))
-            fs.renameSync(join(directory, file), to);
+          dataFor.sfxModules.forEach((file) => {
+            let name = file.replace(/.sfx/g, (dataFor.destination.includes('win32') ? 'win32' : 'other32') + '.sfx');
+            let to = join(directory, name);
+            if (!file.includes('7zr.exe'))
+              fs.renameSync(join(directory, file), to);
 
-          console.log('Sfx module ' + name + ' copied successfully!');
-        });
-      } catch (err) {
-        console.error(err);
+            console.log('Sfx module ' + name + ' copied successfully!');
+          });
+        } catch (err) {
+          console.error(err);
+        }
       }
-    }
 
-    fs.unlinkSync(dataFor.extraSourceFile);
-    fs.removeSync(dataFor.destination);
-  });
-});
+      fs.unlinkSync(dataFor.extraSourceFile);
+      fs.removeSync(dataFor.destination);
+    });
+  })
+  .catch((err) => console.log(err));
