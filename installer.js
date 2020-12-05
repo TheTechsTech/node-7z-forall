@@ -6,7 +6,6 @@ const fs = require('fs-extra'),
   path = require('path'),
   spawn = require('cross-spawn'),
   unCompress = require('all-unpacker'),
-  retryPromise = require('retrying-promise'),
   fetching = require('node-wget-fetch'),
   system_installer = require('system-installer'),
   macos_release = require('macos-release');
@@ -348,3 +347,79 @@ Promise.all(extractionPromises)
     });
   })
   .catch((err) => console.log(err));
+
+/**
+ * Returns a promise that conditionally tries to resolve multiple times, as specified by the retry
+ * policy.
+ * @param {retryPolicy} [options] - Either An object that specifies the retry policy.
+ * @param {retryExecutor} executor - A function that is called for each attempt to resolve the promise.
+ * @returns {Promise}
+ */
+function retryPromise(options, executor) {
+  if (executor == undefined) {
+    executor = options;
+    options = {};
+  }
+
+  var opts = prepOpts(options);
+  var attempts = 1;
+
+  return new Promise((resolve, reject) => {
+    let retrying = false;
+
+    function retry(err) {
+      if (retrying) return;
+      retrying = true;
+      if (attempts < opts.retries) {
+        setTimeout(() => {
+          attempts++;
+          retrying = false;
+          executor(resolve, retry, reject, attempts);
+        }, createTimeout(attempts, opts));
+      } else {
+        //console.log(attempts, opts.retries);
+        reject(err);
+      }
+    }
+
+    executor(resolve, retry, reject, attempts);
+  });
+}
+
+/*
+ * Preps the options object, initializing default values and checking constraints.
+ * @param {Object} options - The options as provided to `retryingPromise`.
+ */
+function prepOpts(options) {
+  var opts = {
+    retries: 10,
+    factor: 2,
+    minTimeout: 1000,
+    maxTimeout: Infinity,
+    randomize: false
+  };
+  for (var key in options) {
+    opts[key] = options[key];
+  }
+
+  if (opts.minTimeout > opts.maxTimeout) {
+    throw new Error('minTimeout is greater than maxTimeout');
+  }
+
+  return opts;
+}
+
+/**
+ * Get a timeout value in milliseconds.
+ * @param {number} attempt - The attempt count.
+ * @param {Object} opts - The options.
+ * @returns {number} The timeout value in milliseconds.
+ */
+function createTimeout(attempt, opts) {
+  var random = opts.randomize ? Math.random() + 1 : 1;
+
+  var timeout = Math.round(random * opts.minTimeout * Math.pow(opts.factor, attempt));
+  timeout = Math.min(timeout, opts.maxTimeout);
+
+  return timeout;
+}

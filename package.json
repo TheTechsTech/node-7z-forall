@@ -1,6 +1,6 @@
 {
     "name": "node-7z-forall",
-    "version": "2.1.1",
+    "version": "2.1.2",
     "description": "A CommonJs and ESM frontend to 7-Zip, downloads binaries in for Linux, Windows, and Mac OSX, with methods to create SFX self extracting 7z archives targeting different platforms.",
     "type": "commonjs",
     "main": "lib/index.js",
@@ -10,7 +10,7 @@
     },
     "scripts": {
         "test": "mocha --recursive test/ --timeout=0 --extension mjs --extension js",
-        "coverage": "npx nyc@latest --reporter json --reporter text mocha --recursive test/ --timeout=0 --extension mjs --extension js && codecov -f coverage/coverage-final.json",
+        "coverage": "npx nyc@latest --reporter json --reporter text mocha --recursive test/ --timeout=0 --extension mjs --extension js && npx codecov -f coverage/coverage-final.json",
         "install": "node installer.js"
     },
     "repository": {
@@ -60,18 +60,16 @@
         "node": ">=10.0.0"
     },
     "dependencies": {
-        "all-unpacker": "^0.1.12",
+        "all-unpacker": "^0.1.13",
         "cross-spawn": "^7.0.3",
         "fs-extra": "^9.0.1",
         "macos-release": "^2.4.1",
         "node-wget-fetch": "^1.0.5",
-        "retrying-promise": "^0.0.4",
         "system-installer": "^1.1.5",
         "when": "^3.7.8"
     },
     "devDependencies": {
         "chai": "^4.2.0",
-        "codecov": "^3.8.0",
         "mocha": "^8.2.0"
     }
 }
