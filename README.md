@@ -9,7 +9,7 @@ node-7z-forall
 
 > ____This is for version 2.x WIP, for version 1.x see [1x](https://github.com/techno-express/node-7z-forall/tree/1x) branch.____
 
-There is another module [node-7z-archive/](https://nodei.co/npm/node-7z-archive/) that is ESM only, has an alternative CLI interface, and using the full `7zip` version, mostly a BC WIP rewrite.
+There is another module [node-7z-archive](https://nodei.co/npm/node-7z-archive/) that is ESM only, has an alternative CLI interface, and using the full `7zip` version, mostly a BC WIP rewrite.
 
 Usage
 -----
