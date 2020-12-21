@@ -1,75 +1,75 @@
 {
-    "name": "node-7z-forall",
-    "version": "2.1.2",
-    "description": "A CommonJs and ESM frontend to 7-Zip, downloads binaries in for Linux, Windows, and Mac OSX, with methods to create SFX self extracting 7z archives targeting different platforms.",
-    "type": "commonjs",
-    "main": "lib/index.js",
-    "exports": {
-        ".": "./lib/index.js",
-        "./module": "./lib/esm/index.mjs"
-    },
-    "scripts": {
-        "test": "mocha --recursive test/ --timeout=0 --extension mjs --extension js",
-        "coverage": "npx nyc@latest --reporter json --reporter text mocha --recursive test/ --timeout=0 --extension mjs --extension js && npx codecov -f coverage/coverage-final.json",
-        "install": "node installer.js"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/techno-express/node-7z-forall.git"
-    },
-    "keywords": [
-        "node",
-        "7z",
-        "7za",
-        "7zr",
-        "p7zip",
-        "7zip",
-        "sfx",
-        "binary",
-        "wrapper",
-        "Mac OS X",
-        "Windows",
-        "Linux",
-        "Apple",
-        "cross-platform"
-    ],
-    "author": "Quentin Rossetti <quentin.rossetti@gmail.com>",
-    "contributors": [
-        "HelloGravity",
-        "sketchpunk",
-        "Dannii Willis <curiousdannii@gmail.com>",
-        "redx25 <red.mage25@gmail.com>",
-        "l. stubbs <technoexpressnet@gmail.com>",
-        "František Gič <frantisek.gic@gmail.com>",
-        "Oskar Larsson Högfeldt <g@oskar-lh.name>"
-    ],
-    "license": "ISC",
-    "bugs": {
-        "url": "https://github.com/techno-express/node-7z-forall/issues"
-    },
-    "homepage": "https://github.com/techno-express/node-7z-forall.git",
-    "files": [
-        "*.js",
-        "*.mjs",
-        "LICENSE",
-        "README.md",
-        "lib",
-        "util"
-    ],
-    "engines": {
-        "node": ">=10.0.0"
-    },
-    "dependencies": {
-        "all-unpacker": "^0.1.13",
-        "cross-spawn": "^7.0.3",
-        "fs-extra": "^9.0.1",
-        "macos-release": "^2.4.1",
-        "node-wget-fetch": "^1.0.5",
-        "system-installer": "^1.1.5",
-        "when": "^3.7.8"
-    },
-    "devDependencies": {
-        "chai": "^4.2.0",
-        "mocha": "^8.2.0"
-    }
+  "name": "node-7z-forall",
+  "version": "2.1.4",
+  "description": "A CommonJs and ESM frontend to 7-Zip, downloads binaries in for Linux, Windows, and Mac OSX, with methods to create SFX self extracting 7z archives targeting different platforms.",
+  "type": "commonjs",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./module": "./lib/esm/index.mjs"
+  },
+  "scripts": {
+    "test": "mocha --recursive test/ --timeout=0 --extension mjs --extension js",
+    "coverage": "npx nyc@latest --reporter json --reporter text mocha --recursive test/ --timeout=0 --extension mjs --extension js && npx codecov -f coverage/coverage-final.json",
+    "install": "node installer.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/techno-express/node-7z-forall.git"
+  },
+  "keywords": [
+    "node",
+    "7z",
+    "7za",
+    "7zr",
+    "p7zip",
+    "7zip",
+    "sfx",
+    "binary",
+    "wrapper",
+    "Mac OS X",
+    "Windows",
+    "Linux",
+    "Apple",
+    "cross-platform"
+  ],
+  "author": "Quentin Rossetti <quentin.rossetti@gmail.com>",
+  "contributors": [
+    "HelloGravity",
+    "sketchpunk",
+    "Dannii Willis <curiousdannii@gmail.com>",
+    "redx25 <red.mage25@gmail.com>",
+    "l. stubbs <technoexpressnet@gmail.com>",
+    "František Gič <frantisek.gic@gmail.com>",
+    "Oskar Larsson Högfeldt <g@oskar-lh.name>"
+  ],
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/techno-express/node-7z-forall/issues"
+  },
+  "homepage": "https://github.com/techno-express/node-7z-forall.git",
+  "files": [
+    "*.js",
+    "*.mjs",
+    "LICENSE",
+    "README.md",
+    "lib",
+    "util"
+  ],
+  "engines": {
+    "node": ">=10.0.0"
+  },
+  "dependencies": {
+    "all-unpacker": "^0.1.13",
+    "cross-spawn": "^7.0.3",
+    "fs-extra": "^9.0.1",
+    "macos-release": "^2.4.1",
+    "node-wget-fetch": "^1.0.5",
+    "system-installer": "^1.1.5",
+    "when": "^3.7.8"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^8.2.0"
+  }
 }
