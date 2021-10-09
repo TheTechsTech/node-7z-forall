@@ -1,6 +1,6 @@
 {
   "name": "node-7z-forall",
-  "version": "2.1.4",
+  "version": "2.1.5",
   "description": "A CommonJs and ESM frontend to 7-Zip, downloads binaries in for Linux, Windows, and Mac OSX, with methods to create SFX self extracting 7z archives targeting different platforms.",
   "type": "commonjs",
   "main": "lib/index.js",
@@ -64,7 +64,7 @@
     "cross-spawn": "^7.0.3",
     "fs-extra": "^9.0.1",
     "macos-release": "^2.4.1",
-    "node-wget-fetch": "^1.0.5",
+    "node-wget-fetch": "1.0.5",
     "system-installer": "^1.1.5",
     "when": "^3.7.8"
   },
