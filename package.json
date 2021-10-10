@@ -64,7 +64,7 @@
     "cross-spawn": "^7.0.3",
     "fs-extra": "^9.1.0",
     "macos-release": "^2.5.0",
-    "node-wget-fetch": "1.0.5",
+    "node-wget-fetch": "1.1.0",
     "system-installer": "^1.1.6",
     "when": "^3.7.8"
   },
